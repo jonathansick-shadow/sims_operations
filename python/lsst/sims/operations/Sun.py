@@ -35,11 +35,12 @@ from math import pi
 
 import calendar
 
+
 class Sun:
 
     def __init__(self):
         """"""
-    	# Some conversion factors between radians and degrees
+        # Some conversion factors between radians and degrees
         self.RADEG = 180.0 / pi
         self.DEGRAD = pi / 180.0
         self.INV360 = 1.0 / 360.0
@@ -162,26 +163,26 @@ class Sun:
                 or civil, -12 degrees for nautical and -18
                 degrees for astronomical twilight.
         upper_limb: non-zero -> upper limb, zero -> center
-		      Set to non-zero (e.g. 1) when computing rise/set
+                      Set to non-zero (e.g. 1) when computing rise/set
               times, and to zero when computing start/end of
-		      twilight.
-	      *rise = where to store the rise time
-	      *set  = where to store the set  time
-	              Both times are relative to the specified altitude,
-		          and thus this function can be used to compute
-		          various twilight times, as well as rise/set times
+                      twilight.
+              *rise = where to store the rise time
+              *set  = where to store the set  time
+                      Both times are relative to the specified altitude,
+                          and thus this function can be used to compute
+                          various twilight times, as well as rise/set times
         Return value:  0 = sun rises/sets this day, times stored at
                            *trise and *tset.
-		      +1 = sun above the specified 'horizon' 24 hours.
-		           *trise set to time when the sun is at south,
-			   minus 12 hours while *tset is set to the south
-			   time plus 12 hours. 'Day' length = 24 hours
-		      -1 = sun is below the specified 'horizon' 24 hours
-		           'Day' length = 0 hours, *trise and *tset are
-			    both set to the time when the sun is at south.
+                      +1 = sun above the specified 'horizon' 24 hours.
+                           *trise set to time when the sun is at south,
+                           minus 12 hours while *tset is set to the south
+                           time plus 12 hours. 'Day' length = 24 hours
+                      -1 = sun is below the specified 'horizon' 24 hours
+                           'Day' length = 0 hours, *trise and *tset are
+                            both set to the time when the sun is at south.
         """
         # Compute d of 12h local mean solar time
-        d = self.daysSince2000Jan0(year,month,day) + 0.5 - (lon / 360.0)
+        d = self.daysSince2000Jan0(year, month, day) + 0.5 - (lon / 360.0)
 
         # Compute local sidereal time of this moment
         sidtime = self.revolution(self.GMST0(d) + 180.0 + lon)
@@ -193,10 +194,10 @@ class Sun:
         sr = res[2]
 
         # Compute time when Sun is at south - in hours UT
-        tsouth = 12.0 - self.rev180(sidtime - sRA) / 15.0;
+        tsouth = 12.0 - self.rev180(sidtime - sRA) / 15.0
 
         # Compute the Sun's apparent radius, degrees
-        sradius = 0.2666 / sr;
+        sradius = 0.2666 / sr
 
         # Do correction to upper limb, if necessary
         if upper_limb:
@@ -208,174 +209,174 @@ class Sun:
         cost = (self.sind(altit) - self.sind(lat) * self.sind(sdec)) / (self.cosd(lat) * self.cosd(sdec))
 
         if cost >= 1.0:
-    	    rc = -1
-    	    t = 0.0           # Sun always below altit
+            rc = -1
+            t = 0.0           # Sun always below altit
 
         elif cost <= -1.0:
-    	    rc = +1
-    	    t = 12.0;         # Sun always above altit
+            rc = +1
+            t = 12.0         # Sun always above altit
 
         else:
-    	    t = self.acosd(cost) / 15.0   # The diurnal arc, hours
+            t = self.acosd(cost) / 15.0   # The diurnal arc, hours
 
         # Store rise and set times - in hours UT
         return (tsouth - t, tsouth + t)
 
     def __daylen__(self, year, month, day, lon, lat, altit, upper_limb):
-    	"""
-    	Note: year,month,date = calendar date, 1801-2099 only.
-    	      Eastern longitude positive, Western longitude negative
-    	      Northern latitude positive, Southern latitude negative
-    	      The longitude value is not critical. Set it to the correct
-    	      longitude if you're picky, otherwise set to, say, 0.0
-    	      The latitude however IS critical - be sure to get it correct
-    	      altit = the altitude which the Sun should cross
-    	              Set to -35/60 degrees for rise/set, -6 degrees
-    	              for civil, -12 degrees for nautical and -18
-    	              degrees for astronomical twilight.
-    	        upper_limb: non-zero -> upper limb, zero -> center
-    	              Set to non-zero (e.g. 1) when computing day length
-    	              and to zero when computing day+twilight length.
+        """
+        Note: year,month,date = calendar date, 1801-2099 only.
+              Eastern longitude positive, Western longitude negative
+              Northern latitude positive, Southern latitude negative
+              The longitude value is not critical. Set it to the correct
+              longitude if you're picky, otherwise set to, say, 0.0
+              The latitude however IS critical - be sure to get it correct
+              altit = the altitude which the Sun should cross
+                      Set to -35/60 degrees for rise/set, -6 degrees
+                      for civil, -12 degrees for nautical and -18
+                      degrees for astronomical twilight.
+                upper_limb: non-zero -> upper limb, zero -> center
+                      Set to non-zero (e.g. 1) when computing day length
+                      and to zero when computing day+twilight length.
 
-    	"""
+        """
 
         # Compute d of 12h local mean solar time
-    	d = self.daysSince2000Jan0(year,month,day) + 0.5 - (lon / 360.0)
+        d = self.daysSince2000Jan0(year, month, day) + 0.5 - (lon / 360.0)
 
         # Compute obliquity of ecliptic (inclination of Earth's axis)
-    	obl_ecl = 23.4393 - 3.563E-7 * d
+        obl_ecl = 23.4393 - 3.563E-7 * d
 
         # Compute Sun's position
-    	res = self.sunpos(d)
-    	slon = res[0]
-    	sr = res[1]
+        res = self.sunpos(d)
+        slon = res[0]
+        sr = res[1]
 
-    	# Compute sine and cosine of Sun's declination
-    	sin_sdecl = self.sind(obl_ecl) * self.sind(slon)
-    	cos_sdecl = math.sqrt(1.0 - sin_sdecl * sin_sdecl)
+        # Compute sine and cosine of Sun's declination
+        sin_sdecl = self.sind(obl_ecl) * self.sind(slon)
+        cos_sdecl = math.sqrt(1.0 - sin_sdecl * sin_sdecl)
 
         # Compute the Sun's apparent radius, degrees
-    	sradius = 0.2666 / sr
+        sradius = 0.2666 / sr
 
         # Do correction to upper limb, if necessary
-    	if upper_limb:
-    	    altit = altit - sradius
+        if upper_limb:
+            altit = altit - sradius
 
-    	cost = (self.sind(altit) - self.sind(lat) * sin_sdecl) / (self.cosd(lat) * cos_sdecl)
-    	if cost >= 1.0:
-    	    t = 0.0             # Sun always below altit
+        cost = (self.sind(altit) - self.sind(lat) * sin_sdecl) / (self.cosd(lat) * cos_sdecl)
+        if cost >= 1.0:
+            t = 0.0             # Sun always below altit
 
-    	elif cost <= -1.0:
-    	    t = 24.0      # Sun always above altit
+        elif cost <= -1.0:
+            t = 24.0      # Sun always above altit
 
-    	else:
-    	    t = (2.0 / 15.0) * self.acosd(cost);     # The diurnal arc, hours
+        else:
+            t = (2.0 / 15.0) * self.acosd(cost)     # The diurnal arc, hours
 
-    	return t
+        return t
 
     def sunpos(self, d):
         """
-    	Computes the Sun's ecliptic longitude and distance
-    	at an instant given in d, number of days since
-    	2000 Jan 0.0.  The Sun's ecliptic latitude is not
-    	computed, since it's always very near 0.
-    	"""
+        Computes the Sun's ecliptic longitude and distance
+        at an instant given in d, number of days since
+        2000 Jan 0.0.  The Sun's ecliptic latitude is not
+        computed, since it's always very near 0.
+        """
 
         # Compute mean elements
-    	M = self.revolution(356.0470 + 0.9856002585 * d)
-    	w = 282.9404 + 4.70935E-5 * d
-    	e = 0.016709 - 1.151E-9 * d
+        M = self.revolution(356.0470 + 0.9856002585 * d)
+        w = 282.9404 + 4.70935E-5 * d
+        e = 0.016709 - 1.151E-9 * d
 
         # Compute true longitude and radius vector
-    	E = M + e * self.RADEG * self.sind(M) * (1.0 + e * self.cosd(M))
-    	x = self.cosd(E) - e
-    	y = math.sqrt(1.0 - e * e) * self.sind(E)
-    	r = math.sqrt(x * x + y * y)              #Solar distance
-    	v = self.atan2d(y, x)                 # True anomaly
-    	lon = v + w                        # True solar longitude
-    	if lon >= 360.0:
-    	    lon = lon - 360.0   # Make it 0..360 degrees
+        E = M + e * self.RADEG * self.sind(M) * (1.0 + e * self.cosd(M))
+        x = self.cosd(E) - e
+        y = math.sqrt(1.0 - e * e) * self.sind(E)
+        r = math.sqrt(x * x + y * y)  # Solar distance
+        v = self.atan2d(y, x)                 # True anomaly
+        lon = v + w                        # True solar longitude
+        if lon >= 360.0:
+            lon = lon - 360.0   # Make it 0..360 degrees
 
-    	return (lon, r)
+        return (lon, r)
 
     def sunRADec(self, d):
-    	"""
+        """
         Returns the angle of the Sun (RA)
         the declination (dec) and the distance of the Sun (r)
         for a given day d.
         """
 
         # Compute Sun's ecliptical coordinates
-    	res = self.sunpos(d)
-    	lon = res[0]  # True solar longitude
-    	r = res[1]    # Solar distance
+        res = self.sunpos(d)
+        lon = res[0]  # True solar longitude
+        r = res[1]    # Solar distance
 
         # Compute ecliptic rectangular coordinates (z=0)
-    	x = r * self.cosd(lon)
-    	y = r * self.sind(lon)
+        x = r * self.cosd(lon)
+        y = r * self.sind(lon)
 
         # Compute obliquity of ecliptic (inclination of Earth's axis)
-    	obl_ecl = 23.4393 - 3.563E-7 * d
+        obl_ecl = 23.4393 - 3.563E-7 * d
 
         # Convert to equatorial rectangular coordinates - x is unchanged
-    	z = y * self.sind(obl_ecl)
-    	y = y * self.cosd(obl_ecl)
+        z = y * self.sind(obl_ecl)
+        y = y * self.cosd(obl_ecl)
 
         # Convert to spherical coordinates
-    	RA = self.atan2d(y, x)
-    	dec = self.atan2d(z, math.sqrt(x * x + y * y))
+        RA = self.atan2d(y, x)
+        dec = self.atan2d(z, math.sqrt(x * x + y * y))
 
-    	return (RA, dec, r)
+        return (RA, dec, r)
 
     def revolution(self, x):
-    	"""
-    	This function reduces any angle to within the first revolution
-    	by subtracting or adding even multiples of 360.0 until the
-    	result is >= 0.0 and < 360.0
+        """
+        This function reduces any angle to within the first revolution
+        by subtracting or adding even multiples of 360.0 until the
+        result is >= 0.0 and < 360.0
 
-    	Reduce angle to within 0..360 degrees
-    	"""
-    	return x - 360.0 * math.floor(x * self.INV360)
+        Reduce angle to within 0..360 degrees
+        """
+        return x - 360.0 * math.floor(x * self.INV360)
 
     def rev180(self, x):
-    	"""
-    	Reduce angle to within +180..+180 degrees
-    	"""
-    	return x - 360.0 * math.floor(x * self.INV360 + 0.5)
+        """
+        Reduce angle to within +180..+180 degrees
+        """
+        return x - 360.0 * math.floor(x * self.INV360 + 0.5)
 
     def GMST0(self, d):
-    	"""
-    	This function computes GMST0, the Greenwich Mean Sidereal Time
-    	at 0h UT (i.e. the sidereal time at the Greenwhich meridian at
-    	0h UT).  GMST is then the sidereal time at Greenwich at any
-    	time of the day.  I've generalized GMST0 as well, and define it
-    	as:  GMST0 = GMST - UT  --  this allows GMST0 to be computed at
-    	other times than 0h UT as well.  While this sounds somewhat
-    	contradictory, it is very practical:  instead of computing
-    	GMST like:
+        """
+        This function computes GMST0, the Greenwich Mean Sidereal Time
+        at 0h UT (i.e. the sidereal time at the Greenwhich meridian at
+        0h UT).  GMST is then the sidereal time at Greenwich at any
+        time of the day.  I've generalized GMST0 as well, and define it
+        as:  GMST0 = GMST - UT  --  this allows GMST0 to be computed at
+        other times than 0h UT as well.  While this sounds somewhat
+        contradictory, it is very practical:  instead of computing
+        GMST like:
 
-    	 GMST = (GMST0) + UT * (366.2422/365.2422)
+         GMST = (GMST0) + UT * (366.2422/365.2422)
 
-    	where (GMST0) is the GMST last time UT was 0 hours, one simply
-    	computes:
+        where (GMST0) is the GMST last time UT was 0 hours, one simply
+        computes:
 
-    	 GMST = GMST0 + UT
+         GMST = GMST0 + UT
 
-    	where GMST0 is the GMST "at 0h UT" but at the current moment!
-    	Defined in this way, GMST0 will increase with about 4 min a
-    	day.  It also happens that GMST0 (in degrees, 1 hr = 15 degr)
-    	is equal to the Sun's mean longitude plus/minus 180 degrees!
-    	(if we neglect aberration, which amounts to 20 seconds of arc
-    	or 1.33 seconds of time)
-    	"""
+        where GMST0 is the GMST "at 0h UT" but at the current moment!
+        Defined in this way, GMST0 will increase with about 4 min a
+        day.  It also happens that GMST0 (in degrees, 1 hr = 15 degr)
+        is equal to the Sun's mean longitude plus/minus 180 degrees!
+        (if we neglect aberration, which amounts to 20 seconds of arc
+        or 1.33 seconds of time)
+        """
         # Sidtime at 0h UT = L (Sun's mean longitude) + 180.0 degr
         # L = M + w, as defined in sunpos().  Since I'm too lazy to
         # add these numbers, I'll let the C compiler do it for me.
         # Any decent C compiler will add the constants at compile
         # time, imposing no runtime or code overhead.
 
-    	sidtim0 = self.revolution((180.0 + 356.0470 + 282.9404) + (0.9856002585 + 4.70935E-5) * d)
-    	return sidtim0;
+        sidtim0 = self.revolution((180.0 + 356.0470 + 282.9404) + (0.9856002585 + 4.70935E-5) * d)
+        return sidtim0
 
     def solar_altitude(self, latitude, year, month, day):
         """
@@ -392,12 +393,12 @@ class Sun:
         """
         # Compute declination
         N = self.daysSince2000Jan0(year, month, day)
-        res =  self.sunRADec(N)
+        res = self.sunRADec(N)
         declination = res[1]
         sr = res[2]
 
         # Compute the altitude
-        altitude = 90.0 - latitude  + declination
+        altitude = 90.0 - latitude + declination
 
         # In the tropical and  in extreme latitude, values over 90 may occurs.
         if altitude > 90:
@@ -425,7 +426,7 @@ class Sun:
             fCoeff = 0
         else:
             fCoeff =  -1.56e-12*fSF**4 + 5.972e-9*fSF**3 -\
-                     8.364e-6*fSF**2  + 5.183e-3*fSF - 0.435
+                8.364e-6*fSF**2 + 5.183e-3*fSF - 0.435
 
         fSFT = fSF * fCoeff
 
@@ -462,10 +463,10 @@ class Sun:
         fDeclsc2 = self.cosd(latitude) * math.cos(fRdecl)
         tDeclsc = (fDeclsc1, fDeclsc2)
         # in minutes
-        fEot = 0.002733 -7.343 * math.sin(fA) + 0.5519 * math.cos(fA) \
-               - 9.47 * math.sin(2.0 * fA) - 3.02 * math.cos(2.0 * fA) \
-               - 0.3289 * math.sin(3. * fA) -0.07581 * math.cos(3.0 * fA) \
-               -0.1935 * math.sin(4.0 * fA) -0.1245 * math.cos(4.0 * fA)
+        fEot = 0.002733 - 7.343 * math.sin(fA) + 0.5519 * math.cos(fA) \
+            - 9.47 * math.sin(2.0 * fA) - 3.02 * math.cos(2.0 * fA) \
+            - 0.3289 * math.sin(3. * fA) - 0.07581 * math.cos(3.0 * fA) \
+            - 0.1935 * math.sin(4.0 * fA) - 0.1245 * math.cos(4.0 * fA)
         # Express in fraction of hour
         fEot = fEot / 60.0
         # Express in radians
@@ -493,9 +494,9 @@ class Sun:
         Miguel Tremblay      June 30th 2004
         """
 
-        dVar = 1. / (1.0 - 9.464e-4 * math.sin(dAlf) - 0.01671 * math.cos(dAlf) - \
-                    + 1.489e-4 * math.cos(2.0 * dAlf) - 2.917e-5 * math.sin(3.0 * dAlf) - \
-                    + 3.438e-4 * math.cos(4.0 * dAlf)) ** 2
+        dVar = 1. / (1.0 - 9.464e-4 * math.sin(dAlf) - 0.01671 * math.cos(dAlf) -
+                     + 1.489e-4 * math.cos(2.0 * dAlf) - 2.917e-5 * math.sin(3.0 * dAlf) -
+                     + 3.438e-4 * math.cos(4.0 * dAlf)) ** 2
         return dVar
 
     def Julian(self, year, month, day):

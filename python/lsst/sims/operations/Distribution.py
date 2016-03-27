@@ -32,6 +32,7 @@ class Distribution(LSSTObject):
     """
     Base class for the Distribution hiarchy.
     """
+
     def __init__(self, date, duration, log=False, logfile='./Distribution.log', verbose=-1):
         """
         Standard initializer.
@@ -89,11 +90,13 @@ class Distribution(LSSTObject):
             raise (IndexError, 'i < 0')
         return None
 
+
 class LinearDistribution(Distribution):
     """
     Linear distribution: the self.numEvents are evenly distributed
     over self.duration seconds starting from self.date.
     """
+
     def __init__(self, date, duration, interval, log=False, logfile='./Distribution.log', verbose=-1):
         """
         Custom initializer: we need the frequency of the distribution.
@@ -144,12 +147,14 @@ class LinearDistribution(Distribution):
         t = self.date + i * (self.duration / self.numEvents)
         return int(round(t))
 
+
 class LogDistribution(Distribution):
     """
     Log distribution: the self.numEvents are distributed over
     self.duration seconds starting from self.date using a log
     function.
     """
+
     def __init__(self, date, duration, interval, log=False, logfile='./Distribution.log', verbose=-1):
         """
         Custom initializer: we need the frequency of the distribution.
@@ -198,6 +203,7 @@ class LogDistribution(Distribution):
 
         t = self.date + 10. ** (i * self.interval)
         return int(round(t))
+
 
 class IvezicDistribution(Distribution):
     """
@@ -283,17 +289,17 @@ class IvezicDistribution(Distribution):
         # We have 6 events in an atomic sequence. This, times the
         # number of atomic sequences should give us numEvents (more or
         # less)
-        #if (self.nSequences):
+        # if (self.nSequences):
         #    t = self.duration - (self.delayNext * self.nSequences)
-        #else:
+        # else:
         #    t = self.duration
 
-        #for i in range (5):
+        # for i in range (5):
         #    t -= self.delay[i]
         #    if (t <= 0):
         #        break
         #self.numEvents = i
-        #if (self.nSequences):
+        # if (self.nSequences):
         #    self.numEvents += self.nSequences * 6
 
         self.numAtomic = len(self.delay) + 1
@@ -319,7 +325,7 @@ class IvezicDistribution(Distribution):
         # the atomic sequence.
         #j = i
         #t = self.date
-        #if (j > 5):
+        # if (j > 5):
         #    n = int (j / self.numAtomic)
         #    j = j % self.numAtomic
 
@@ -333,7 +339,7 @@ class IvezicDistribution(Distribution):
 
         # Now j refers to an index in the atomic sequence
         #k = 0
-        #while (k <= j):
+        # while (k <= j):
         #    t += self.delay[k]
         #    k += 1
 

@@ -30,6 +30,7 @@
 import os
 import pstate
 
+
 def recursive_install(env, path):
     nodes = env.Glob(os.path.join(path, '*'), strings=False)
     nodes.extend(env.Glob(os.path.join(path, '*.*'), strings=False))
@@ -41,6 +42,7 @@ def recursive_install(env, path):
             out.append(n)
 
     return out
+
 
 def RecursiveInstall(env, target, dir):
     nodes = recursive_install(env, dir)
@@ -60,8 +62,10 @@ def RecursiveInstall(env, target, dir):
         pstate.log.debug("RecursiveInstall() : source %s, target %s" % (s, t))
         env.InstallAs(env.File(t), env.File(s))
 
+
 def generate(env):
     env.AddMethod(RecursiveInstall)
+
 
 def exists(env):
     return True

@@ -33,6 +33,7 @@ use.append("-h, --help" + "\t" * 3 + "Print help and exit.")
 
 USAGE_STR = os.linesep.join(use)
 
+
 def getSessionID(lsstDB, sessionTbl, code_test, track_run, startup_comment):
     """
     Create an entry in the the Session table and fetch the key which
@@ -97,13 +98,13 @@ def getSessionID(lsstDB, sessionTbl, code_test, track_run, startup_comment):
 
 def track(sessionID, hostname, user, startup_comment, code_test, status_id):
     url = "http://opsimcvs.tuc.noao.edu/tracking/tracking.php"
-    #params = urllib.urlencode({'sessionID': sessionID,
-        #                       'hostname': hostname,
-        #                       'user': user,
-        #                       'startup_comment': startup_comment,
-        #                       'code_test': code_test,
-        #                       'status_id': status_id,
-        #                       'run_version': OPSIM_VERSION})
+    # params = urllib.urlencode({'sessionID': sessionID,
+    #                       'hostname': hostname,
+    #                       'user': user,
+    #                       'startup_comment': startup_comment,
+    #                       'code_test': code_test,
+    #                       'status_id': status_id,
+    #                       'run_version': OPSIM_VERSION})
     #url = "%s?%s" % (url, params);
     #result = urllib.urlopen(url).read();
     payload = {'sessionID': sessionID, 'hostname': hostname, 'user': user, 'startup_comment': startup_comment,
@@ -716,7 +717,7 @@ def startLsst(args):
         dt = time.time() - t0
         print('      simulation took %.02fs' % (dt))
 
-    #lsstDB.closeConnection()
+    # lsstDB.closeConnection()
 
     return
 

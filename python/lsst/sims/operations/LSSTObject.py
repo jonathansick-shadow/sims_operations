@@ -17,7 +17,9 @@ String Representation
 - __str__
 """
 
+
 class LSSTObject(object):
+
     def __str__(self):
         """
         Override of the default __str__ method. Provide a nice format

@@ -1,6 +1,7 @@
 import logging
 import os
 
+
 def is_readable(dir):
     """
     Test is a dir is readable.
@@ -15,6 +16,7 @@ def is_readable(dir):
     except Exception as e:
         logger.debug("No read access to dir %s : %s" % (dir, e))
         return False
+
 
 def is_writable(dir):
     """

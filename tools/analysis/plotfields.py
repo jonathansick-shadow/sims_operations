@@ -7,7 +7,7 @@ import math
 from Numeric import *
 from pyx import *
 from pyx.graph import axis
-import TableIO 
+import TableIO
 from matplotlib.mlab import *
 import sys
 import MySQLdb
@@ -36,15 +36,15 @@ MAGENTA = "#ff00ff"
 WHITE = "#ffffff"
 
 # only two fonts used
-bigfont = {'fontname'   : 'Courier',
-            'color'      : 'r',
-            'fontweight' : 'bold',
-            'fontsize'   : 11}
+bigfont = {'fontname': 'Courier',
+           'color': 'r',
+           'fontweight': 'bold',
+           'fontsize': 11}
 
-smallfont = {'fontname'   : 'Courier',
-            'color'      : 'r',
-            'fontweight' : 'bold',
-            'fontsize'   : 8}
+smallfont = {'fontname': 'Courier',
+             'color': 'r',
+             'fontweight': 'bold',
+             'fontsize': 8}
 
 
 def project(ra, dec):
@@ -67,7 +67,7 @@ def meridian(ra):
     create a meridian line at given ra
     """
 
-    phi = arrayrange(-90,90)
+    phi = arrayrange(-90, 90)
     lam = zeros(len(phi)) + ra
 
     return lam, phi
@@ -78,7 +78,7 @@ def parallel(dec):
     create a longitude line at given dec
     """
 
-    lam = arrayrange(-180,180)
+    lam = arrayrange(-180, 180)
     phi = zeros(len(lam)) + dec
 
     return lam, phi
@@ -88,7 +88,7 @@ def plotPanel(RA, Dec, nvisits, label, colvals, colnam):
     """
     Plot a panel of visit data
     """
-    
+
     circlesize = 2
     r = RA[:]
     d = Dec[:]
@@ -96,10 +96,10 @@ def plotPanel(RA, Dec, nvisits, label, colvals, colnam):
     r = r*15.0
     # sort arrays
     ind = argsort(n)
-    r = take(r,ind)
-    d = take(d,ind)
-    n = take(n,ind)
-    r = where(r>180.0,r-360.0,r)
+    r = take(r, ind)
+    d = take(d, ind)
+    n = take(n, ind)
+    r = where(r > 180.0, r-360.0, r)
 
     axis("off")
 
@@ -107,17 +107,17 @@ def plotPanel(RA, Dec, nvisits, label, colvals, colnam):
         aitoff_e()
     else:
         aitoff()
-        
+
     cols = setcolors(n, colvals, colnam)
     docir(r, d, circlesize, n, cols)
 
     if label == "nea":
         label = "NEA Sequences"
     else:
-        label = "WL Fields: "+ label
+        label = "WL Fields: " + label
 
     text(0, 1.51, label, bigfont, horizontalalignment='center')
-    axis([-3,3,-1.5,1.5])
+    axis([-3, 3, -1.5, 1.5])
 
     return
 
@@ -128,7 +128,7 @@ def leglab(title, word, colvals, colnam):
     """
 
     axis("off")
-    
+
     x0 = -2.7
     dx = 2.9
     xw = 0.7
@@ -137,86 +137,86 @@ def leglab(title, word, colvals, colnam):
     dy = -0.1
     yw = 0.1
     yo = 0.02
-    
+
     i = -1
-    
+
     for ix in range(2):
         for iy in range(3):
-            i=i+1
+            i = i+1
             ll = [x0+ix*dx, y0+iy*dy]
             ur = [x0+ix*dx+xw, y0+iy*dy+yw]
             legbox(ll, ur, colnam[i+1])
-            if i<len(colvals)-1:
+            if i < len(colvals)-1:
                 string = " " + str(colvals[i]+1) + "-" + str(colvals[i+1]) + " " + word
             else:
                 string = " >" + str(colvals[i]) + " " + word
-            text(ll[0]+xo,ll[1]+yo, string, smallfont, horizontalalignment='left', color=colnam[i+1])
+            text(ll[0]+xo, ll[1]+yo, string, smallfont, horizontalalignment='left', color=colnam[i+1])
 
-    text(0.0,-1.6,title, bigfont, horizontalalignment='center', color=WHITE)
-    
-    axis([-3,3,-2.1,-1.55])
-    
+    text(0.0, -1.6, title, bigfont, horizontalalignment='center', color=WHITE)
+
+    axis([-3, 3, -2.1, -1.55])
+
     return
-    
+
 
 def legbox(ll, ur, color):
     """
     make a box of the given color between
     lower left (ll) and upper right (ur) coordinates
     """
-    
-    x = [ll[0],ur[0],ur[0],ll[0]]
-    y = [ll[1],ll[1],ur[1],ur[1]]
-    a = fill(x,y,color,linewidth=0)
+
+    x = [ll[0], ur[0], ur[0], ll[0]]
+    y = [ll[1], ll[1], ur[1], ur[1]]
+    a = fill(x, y, color, linewidth=0)
 
     return
 
-  
+
 def infoWrite(sessionID, numfields, nums):
     """
     add various information to the bottom of the plot
     """
-    
+
     axis("off")
-    text(1.0,-0.6,socket.gethostname(),bigfont,horizontalalignment='right', color=WHITE)
-    
+    text(1.0, -0.6, socket.gethostname(), bigfont, horizontalalignment='right', color=WHITE)
+
     # Get a connection to the DB
-    connection = openConnection ()
-    cursor = connection.cursor ()
-    
+    connection = openConnection()
+    cursor = connection.cursor()
+
     sql = 'SELECT completion from SeqHistory where completion>.1 and sessionID = %d' % (sessionID)
     # Fetch the data from the DB
-    sys.stderr.write ('Fetching data from the DB...\n')
+    sys.stderr.write('Fetching data from the DB...\n')
 
     try:
-        n = cursor.execute (sql)
+        n = cursor.execute(sql)
     except:
-        sys.stderr.write('Unable to execute SQL query (%s).' % (sql) )
+        sys.stderr.write('Unable to execute SQL query (%s).' % (sql))
 
     try:
-        resObs = cursor.fetchall ()
+        resObs = cursor.fetchall()
     except:
         resObs = None
 
     numseq = len(resObs)
     string = "%d NEA sequences completed" % len(resObs)
-    text(0.6,0.0,string,bigfont,horizontalalignment='left', color=WHITE)
+    text(0.6, 0.0, string, bigfont, horizontalalignment='left', color=WHITE)
 
     string = "%d fields observed" % numfields
-    text(0.0,0.0,string,bigfont,horizontalalignment='left', color=WHITE)
+    text(0.0, 0.0, string, bigfont, horizontalalignment='left', color=WHITE)
 
     string = "%d r observations" % nums[0]
-    text(0.0,-0.3,string,smallfont,horizontalalignment='left', color=WHITE)
+    text(0.0, -0.3, string, smallfont, horizontalalignment='left', color=WHITE)
     string = "%d g observations" % nums[1]
-    text(0.0,-0.45,string,smallfont,horizontalalignment='left', color=WHITE)
+    text(0.0, -0.45, string, smallfont, horizontalalignment='left', color=WHITE)
     string = "%d i observations" % nums[2]
-    text(0.0,-0.6,string,smallfont,horizontalalignment='left', color=WHITE)
+    text(0.0, -0.6, string, smallfont, horizontalalignment='left', color=WHITE)
     string = "%d z observations" % nums[3]
-    text(0.3,-0.3,string,smallfont,horizontalalignment='left', color=WHITE)
+    text(0.3, -0.3, string, smallfont, horizontalalignment='left', color=WHITE)
     string = "%d y observations" % nums[4]
-    text(0.3,-0.45,string,smallfont,horizontalalignment='left', color=WHITE)
+    text(0.3, -0.45, string, smallfont, horizontalalignment='left', color=WHITE)
 
-    axis([0,1,0,1])
+    axis([0, 1, 0, 1])
 
     return
 
@@ -228,37 +228,37 @@ def lsst(SessionID):
 
     [ra, dec, rnum, gnum, ynum, inum, znum, neanum] = createDataset(SessionID)
 
-    figure(num=1, figsize=(9,9), facecolor='k', edgecolor='k')
+    figure(num=1, figsize=(9, 9), facecolor='k', edgecolor='k')
 
     # define colors for regular plots
     colvals = array([0, 20, 40, 60, 80, 100])
-    colnam = [BLACK,BLUE,CYAN,GREEN,YELLOW,RED,MAGENTA]
+    colnam = [BLACK, BLUE, CYAN, GREEN, YELLOW, RED, MAGENTA]
 
-    subplot(4,2,1)
-    plotPanel(ra,dec,rnum,"r",colvals, colnam)
-    subplot(4,2,2)
-    plotPanel(ra,dec,gnum,"g",colvals, colnam)
-    subplot(4,2,3)
-    plotPanel(ra,dec,inum,"i",colvals, colnam)
-    subplot(4,2,4)
-    plotPanel(ra,dec,ynum,"y",colvals, colnam)
-    subplot(4,2,5)
-    plotPanel(ra,dec,znum,"z",colvals, colnam)
+    subplot(4, 2, 1)
+    plotPanel(ra, dec, rnum, "r", colvals, colnam)
+    subplot(4, 2, 2)
+    plotPanel(ra, dec, gnum, "g", colvals, colnam)
+    subplot(4, 2, 3)
+    plotPanel(ra, dec, inum, "i", colvals, colnam)
+    subplot(4, 2, 4)
+    plotPanel(ra, dec, ynum, "y", colvals, colnam)
+    subplot(4, 2, 5)
+    plotPanel(ra, dec, znum, "z", colvals, colnam)
 
-    subplot(4,2,7)
+    subplot(4, 2, 7)
     leglab("WL Fields", "epochs", colvals, colnam)
 
     # redefine colors for nea plots
-    colvals = array([0,6,12,18,24,30])
-    colnam = [BLACK,BLUE,CYAN,GREEN,YELLOW,RED,MAGENTA]
-    subplot(4,2,6)
-    plotPanel(ra,dec,neanum,"nea",colvals, colnam)
+    colvals = array([0, 6, 12, 18, 24, 30])
+    colnam = [BLACK, BLUE, CYAN, GREEN, YELLOW, RED, MAGENTA]
+    subplot(4, 2, 6)
+    plotPanel(ra, dec, neanum, "nea", colvals, colnam)
 
-    subplot(4,2,8)
+    subplot(4, 2, 8)
     leglab("NEA Sequences", "sequences", colvals, colnam)
 
-    subplot(4,1,4)
-    nums = [sum(rnum),sum(gnum),sum(inum),sum(znum),sum(ynum)]
+    subplot(4, 1, 4)
+    nums = [sum(rnum), sum(gnum), sum(inum), sum(znum), sum(ynum)]
 
     numfields = len(ra)
     infoWrite(SessionID, numfields, nums)
@@ -270,21 +270,21 @@ def aitoff():
     """
     make aitoff projection grid
     """
-    
-    xlim(-3,3)
-    ylim(1,1)
 
-    d = arrayrange(-90.0,91.0,30.0)
+    xlim(-3, 3)
+    ylim(1, 1)
+
+    d = arrayrange(-90.0, 91.0, 30.0)
     for dd in d:
         [lam, phi] = parallel(dd)
         [x, y] = project(lam, phi)
-        plot(x,y,color='w')
-        
-    r = arrayrange(-180.0,181.0,30.0)
+        plot(x, y, color='w')
+
+    r = arrayrange(-180.0, 181.0, 30.0)
     for rr in r:
         [lam, phi] = meridian(rr)
         [x, y] = project(lam, phi)
-        plot(x,y,color='w')
+        plot(x, y, color='w')
 
     return
 
@@ -295,8 +295,8 @@ def aitoff_e():
     """
 
     aitoff()
-    
-    r = arrayrange(-180.0,181.0,30.0)
+
+    r = arrayrange(-180.0, 181.0, 30.0)
     d = arctan(sin(r*math.pi/180.0)*tan(23.43333*math.pi/180.0))*180.0/math.pi
     [x, y] = project(r, d)
     plot(x, y, linewidth=3, color='w')
@@ -312,10 +312,10 @@ def setcolors(y, colval, colnam):
     values greater than colval[-1] are colnam[len(colval)+1]
     """
 
-    z = zeros(len(y),Int)
+    z = zeros(len(y), Int)
     for i in range(len(colval)):
-        z = add(z,(i)*logical_and(less_equal(y,colval[i]), greater(y,colval[i-1])))
-    z = add(z,len(colval)*greater(y,colval[-1]))
+        z = add(z, (i)*logical_and(less_equal(y, colval[i]), greater(y, colval[i-1])))
+    z = add(z, len(colval)*greater(y, colval[-1]))
     q = []
     for i in z:
         q.append(colnam[i])
@@ -328,8 +328,8 @@ def docir(ra, dec, size, cnt, color):
     plot a shaded circle (on the sky) at
     the given ra and dec
     """
-    
-    phi = arrayrange(0.0,361.0,30.0)
+
+    phi = arrayrange(0.0, 361.0, 30.0)
     for i in range(len(ra)):
         db = dec[i] + size*cos(phi*math.pi/180.0)
         rb = ra[i] - size*sin(phi*math.pi/180.0)/cos(db*math.pi/180.0)
@@ -338,7 +338,8 @@ def docir(ra, dec, size, cnt, color):
 
     return
 
-def summary (resObs, resSeq):
+
+def summary(resObs, resSeq):
     # Cumulative number of visits per fieldID
     r = {}
     g = {}
@@ -346,105 +347,104 @@ def summary (resObs, resSeq):
     i = {}
     z = {}
     nea = {}
-    
+
     # Utility dictionary {fieldID: (ra, dec)}
     targets = {}
-    
+
     # Start with the NEA sequences
     # Each row has the format
     # (ra, dec, fieldID)
     # We want RA in decimal hours...
     for row in resSeq:
-        ra = float (row[0]) / 15.
-        dec = float (row[1])
-        fieldID = int (row[2])
-        
-        if (not targets.has_key (fieldID)):
+        ra = float(row[0]) / 15.
+        dec = float(row[1])
+        fieldID = int(row[2])
+
+        if (not targets.has_key(fieldID)):
             targets[fieldID] = (ra, dec)
-        
-        if (not nea.has_key (fieldID)):
+
+        if (not nea.has_key(fieldID)):
             nea[fieldID] = 1
         else:
             nea[fieldID] += 1
-    
-    
+
     # Now the observations!
     # Each row has the format
     # (ra, dec, fieldID, filter, expDate)
     # and it is grouped by observation date.
     for row in resObs:
         # We want RA in decimal hours...
-        ra = float (row[0]) / 15.
-        dec = float (row[1])
-        fieldID = int (row[2])
-        filter = row[3].lower ()
+        ra = float(row[0]) / 15.
+        dec = float(row[1])
+        fieldID = int(row[2])
+        filter = row[3].lower()
         date = row[4]
-        
-        if (not targets.has_key (fieldID)):
+
+        if (not targets.has_key(fieldID)):
             targets[fieldID] = (ra, dec)
-        
+
         if (filter == 'r'):
-            if (not r.has_key (fieldID)):
+            if (not r.has_key(fieldID)):
                 r[fieldID] = 1
             else:
                 r[fieldID] += 1
-            if (not g.has_key (fieldID)):
+            if (not g.has_key(fieldID)):
                 g[fieldID] = 0
-            if (not y.has_key (fieldID)):
+            if (not y.has_key(fieldID)):
                 y[fieldID] = 0
-            if (not i.has_key (fieldID)):
+            if (not i.has_key(fieldID)):
                 i[fieldID] = 0
-            if (not z.has_key (fieldID)):
+            if (not z.has_key(fieldID)):
                 z[fieldID] = 0
         elif (filter == 'g'):
-            if (not r.has_key (fieldID)):
+            if (not r.has_key(fieldID)):
                 r[fieldID] = 0
-            if (not g.has_key (fieldID)):
+            if (not g.has_key(fieldID)):
                 g[fieldID] = 1
             else:
                 g[fieldID] += 1
-            if (not y.has_key (fieldID)):
+            if (not y.has_key(fieldID)):
                 y[fieldID] = 0
-            if (not i.has_key (fieldID)):
+            if (not i.has_key(fieldID)):
                 i[fieldID] = 0
-            if (not z.has_key (fieldID)):
+            if (not z.has_key(fieldID)):
                 z[fieldID] = 0
         elif (filter == 'y'):
-            if (not r.has_key (fieldID)):
+            if (not r.has_key(fieldID)):
                 r[fieldID] = 0
-            if (not g.has_key (fieldID)):
+            if (not g.has_key(fieldID)):
                 g[fieldID] = 0
-            if (not y.has_key (fieldID)):
+            if (not y.has_key(fieldID)):
                 y[fieldID] = 1
             else:
                 y[fieldID] += 1
-            if (not i.has_key (fieldID)):
+            if (not i.has_key(fieldID)):
                 i[fieldID] = 0
-            if (not z.has_key (fieldID)):
+            if (not z.has_key(fieldID)):
                 z[fieldID] = 0
         elif (filter == 'i'):
-            if (not r.has_key (fieldID)):
+            if (not r.has_key(fieldID)):
                 r[fieldID] = 0
-            if (not g.has_key (fieldID)):
+            if (not g.has_key(fieldID)):
                 g[fieldID] = 0
-            if (not y.has_key (fieldID)):
+            if (not y.has_key(fieldID)):
                 y[fieldID] = 0
-            if (not i.has_key (fieldID)):
+            if (not i.has_key(fieldID)):
                 i[fieldID] = 1
             else:
                 i[fieldID] += 1
-            if (not z.has_key (fieldID)):
+            if (not z.has_key(fieldID)):
                 z[fieldID] = 0
         elif (filter == 'z'):
-            if (not r.has_key (fieldID)):
+            if (not r.has_key(fieldID)):
                 r[fieldID] = 0
-            if (not g.has_key (fieldID)):
+            if (not g.has_key(fieldID)):
                 g[fieldID] = 0
-            if (not y.has_key (fieldID)):
+            if (not y.has_key(fieldID)):
                 y[fieldID] = 0
-            if (not i.has_key (fieldID)):
+            if (not i.has_key(fieldID)):
                 i[fieldID] = 0
-            if (not z.has_key (fieldID)):
+            if (not z.has_key(fieldID)):
                 z[fieldID] = 1
             else:
                 z[fieldID] += 1
@@ -454,11 +454,11 @@ def summary (resObs, resSeq):
 
 def createDataset(sessionID, fov=FOV):
     # Get a connection to the DB
-    connection = openConnection ()
-    cursor = connection.cursor ()
+    connection = openConnection()
+    cursor = connection.cursor()
 
     # Remember that the ObsHistory records the same observation up tp N times
-    # where N is the number of active proposals (serendipitous obs!). In 
+    # where N is the number of active proposals (serendipitous obs!). In
     # particular, some proposals accept any serendipitous observation, other
     # don't. We need to figure out the max spatial coverage.
     # Fetch all the data for this Session ID, if any
@@ -469,23 +469,23 @@ def createDataset(sessionID, fov=FOV):
     sql += 'f.fieldFov = %s AND ' % (fov)
     sql += 'o.fieldID = f.fieldID '
     sql += 'GROUP BY o.expDate'
-    
+
     # Fetch the data from the DB
-    sys.stderr.write ('Fetching data from the DB...\n')
+    sys.stderr.write('Fetching data from the DB...\n')
     try:
-        n = cursor.execute (sql)
+        n = cursor.execute(sql)
     except:
-        sys.stderr.write('Unable to execute SQL query (%s).' % (sql) )
+        sys.stderr.write('Unable to execute SQL query (%s).' % (sql))
 
     try:
-        resObs = cursor.fetchall ()
+        resObs = cursor.fetchall()
     except:
         resObs = None
-    
+
     if (not resObs):
         outFileName = None
-        sys.stderr.write ('No data for Session %d' \
-            % (sessionID))
+        sys.stderr.write('No data for Session %d'
+                         % (sessionID))
     else:
         # Fetch all the data for this Session ID, if any
         sql = 'SELECT f.fieldRA, f.fieldDec, s.fieldID '
@@ -494,18 +494,18 @@ def createDataset(sessionID, fov=FOV):
         sql += 'f.fieldFov = %s AND ' % (fov)
         sql += 's.completion >= 1 AND '
         sql += 's.fieldID = f.fieldID '
-        
+
         # Fetch the data from the DB
-        sys.stderr.write ('Fetching data from the DB...\n')
-        n = cursor.execute (sql)
-        
+        sys.stderr.write('Fetching data from the DB...\n')
+        n = cursor.execute(sql)
+
         try:
-            resSeq = cursor.fetchall ()
+            resSeq = cursor.fetchall()
         except:
             resSeq = None
-        
+
         # Summarize the results
-        (targets, r, g, y, i, z, nea) = summary (resObs, resSeq)
+        (targets, r, g, y, i, z, nea) = summary(resObs, resSeq)
 
         ra = array([targets[fieldID][0] for fieldID in targets.keys()])
         dec = array([targets[fieldID][1] for fieldID in targets.keys()])
@@ -515,15 +515,16 @@ def createDataset(sessionID, fov=FOV):
         it = array([i[fieldID] for fieldID in targets.keys()])
         zt = array([z[fieldID] for fieldID in targets.keys()])
 
-        def neafilt(x,id):
+        def neafilt(x, id):
             if x.has_key(id):
                 return x[id]
             else:
                 return 0
 
-        neat = array([neafilt(nea,fieldID) for fieldID in targets.keys()])
+        neat = array([neafilt(nea, fieldID) for fieldID in targets.keys()])
 
         return (ra, dec, rt, gt, yt, it, zt, neat)
+
 
 def main():
 
@@ -539,7 +540,7 @@ def main():
 
     (options, args) = parser.parse_args()
 
-    if(len(args)!=1):
+    if(len(args) != 1):
         parser.error("wrong number of arguments")
 
     sessionID = args[0]
@@ -550,7 +551,7 @@ def main():
     if options.filename == None:
         show()
     else:
-        savefig(options.filename, dpi=options.res, facecolor='k', edgecolor='k',orientation='portrait')
+        savefig(options.filename, dpi=options.res, facecolor='k', edgecolor='k', orientation='portrait')
 
 if __name__ == "__main__":
     main()

@@ -29,8 +29,9 @@ from SuperNovaSubSeqProp import *
 from WLprop import *
 
 
-#class TAC (Simulation.Process):
+# class TAC (Simulation.Process):
 class TAC(object):
+
     def __init__(self, lsstDB, nRun, schedulingData, sky, weather, obsScheduler, sessionID, fov, filters,
                  nearEarthConf=None, weakLensConf=None, superNovaConf=None, superNovaSubSeqConf=None,
                  kuiperBeltConf=None, transientObjectConf=None, WLpropConf=None, targetList=None,
@@ -105,7 +106,7 @@ class TAC(object):
 
         if self.log and self.verbose > 1:
             self.log.info('TAC: init()')
-            #for key in self.dbTableDict:
+            # for key in self.dbTableDict:
             #     print " TAC:    Database tables: " + key,self.dbTableDict[key]
 
         return
@@ -138,7 +139,7 @@ class TAC(object):
                     self.log.info('TAC: Weak Lensing Proposal from %s' % (self.weakLensConf[k]))
 
                 # now pause for a while before submitting another one.
-                #yield hold, self
+                # yield hold, self
 
         # Create a new Super Nova proposal and add it to
         # the self.proposals array
@@ -159,7 +160,7 @@ class TAC(object):
                     self.log.info('TAC: SuperNova Proposal from %s' % (self.superNovaConf[k]))
 
                 # now pause for a while before submitting another one.
-                #yield hold, self
+                # yield hold, self
 
         # Create a new Super Nova proposal and add it to
         # the self.proposals array
@@ -181,7 +182,7 @@ class TAC(object):
                     self.log.info('TAC: SuperNovaSubSeq Proposal from %s' % (self.superNovaSubSeqConf[k]))
 
                 # now pause for a while before submitting another one.
-                #yield hold, self
+                # yield hold, self
 
         # Create a new NEA proposal and add it to
         # the self.proposals array
@@ -202,7 +203,7 @@ class TAC(object):
                     self.log.info('TAC: Near Earth Proposal from %s' % (self.nearEarthConf[k]))
 
                 # now pause for a while before submitting another one.
-                #yield hold, self
+                # yield hold, self
 
         # Create a new KBO proposal and add it to
         # the self.proposals array

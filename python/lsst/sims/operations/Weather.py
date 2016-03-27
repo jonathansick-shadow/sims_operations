@@ -22,7 +22,9 @@ Accessors
 from utilities import *
 from LSSTObject import *
 
+
 class Weather(LSSTObject):
+
     def __init__(self, lsstDB, date=None, dbTableDict=None, seeingEpoch=None, simStartDay=None, log=False,
                  logfile='./Weather.log', verbose=-1):
         """
@@ -99,7 +101,7 @@ class Weather(LSSTObject):
             FROM %s)' % (self.dbTableDict['seeing'], adjustedStart, adjustedStart, self.dbTableDict['seeing'])
         (n, res) = self.lsstDB.executeSQL(sql)
         adjustedStart = (res[0][0])
-        #print "n = %d, adjustedStart = %s" % (n, res)
+        # print "n = %d, adjustedStart = %s" % (n, res)
 
         # find closest ending entry in DB for night
         sql = 'SELECT s_date FROM %s \
@@ -107,13 +109,13 @@ class Weather(LSSTObject):
             FROM %s)' % (self.dbTableDict['seeing'], adjustedEnd, adjustedEnd, self.dbTableDict['seeing'])
         (n, res) = self.lsstDB.executeSQL(sql)
         adjustedEnd = (res[0][0])
-        #print "n = %d, adjustedEnd = %s" % (n, res)
+        # print "n = %d, adjustedEnd = %s" % (n, res)
 
         #  Acquire the seeing data
         sql = 'SELECT s_date, seeing FROM %s WHERE s_date >= %d AND s_date <= %d' \
             % (self.dbTableDict['seeing'], adjustedStart, adjustedEnd)
         (n, res) = self.lsstDB.executeSQL(sql)
-        #print "n = %d, res = %s" % (n, res)
+        # print "n = %d, res = %s" % (n, res)
 
         i = 1
         self.curSeeIdx = i
@@ -121,17 +123,17 @@ class Weather(LSSTObject):
             self.tonightSee[i] = (s_date, seeing)
             i += 1
 
-        #print "Weather.tonightSee for start=%d to end=%d" % (startNight, endNight)
-        #print self.tonightSee
+        # print "Weather.tonightSee for start=%d to end=%d" % (startNight, endNight)
+        # print self.tonightSee
 
         if len(self.tonightSee) != 0:
             (self.curSeeDate, self.currentSee) = self.tonightSee.pop(self.curSeeIdx)
             self.curSeeIdx += 1
             nextSeeDate = self.tonightSee[self.curSeeIdx][0]
             self.seeInterval = (nextSeeDate - self.curSeeDate) / 2
-            #print "after pop self.tonightSee()"
-            #print self.tonightSee
-            #print "nextSeeDate = %d, seeInterval = %d" % (nextSeeDate, self.seeInterval)
+            # print "after pop self.tonightSee()"
+            # print self.tonightSee
+            # print "nextSeeDate = %d, seeInterval = %d" % (nextSeeDate, self.seeInterval)
         #  ?? else:
 
         return
@@ -153,10 +155,10 @@ class Weather(LSSTObject):
             if len(self.tonightSee) != 0:
                 nextSeeDate = self.tonightSee[self.curSeeIdx][0]
                 self.seeInterval = (nextSeeDate - self.curSeeDate) / 2
-                #print "nextSeeDate = %d self.seeInterval = %d" % (nextSeeDate, self.seeInterval)
+                # print "nextSeeDate = %d self.seeInterval = %d" % (nextSeeDate, self.seeInterval)
             else:
                 self.seeInterval = 0
-        #print "self.curSeeDate = %d use current seeing = %f" % (self.curSeeDate, self.currentSee)
+        # print "self.curSeeDate = %d use current seeing = %f" % (self.curSeeDate, self.currentSee)
 
         return (self.currentSee)
 
@@ -175,7 +177,7 @@ class Weather(LSSTObject):
             FROM %s)' % (self.dbTableDict['cloud'], adjustedStart, adjustedStart, self.dbTableDict['cloud'])
         (n, res) = self.lsstDB.executeSQL(sql)
         adjustedStart = (res[0][0])
-        #print "n = %d, adjustedStart = %s" % (n, res)
+        # print "n = %d, adjustedStart = %s" % (n, res)
 
         # find closest ending entry in DB for night
         sql = 'SELECT c_date FROM %s \
@@ -183,13 +185,13 @@ class Weather(LSSTObject):
             FROM %s)' % (self.dbTableDict['cloud'], adjustedEnd, adjustedEnd, self.dbTableDict['cloud'])
         (n, res) = self.lsstDB.executeSQL(sql)
         adjustedEnd = (res[0][0])
-        #print "n = %d, adjustedEnd = %s" % (n, res)
+        # print "n = %d, adjustedEnd = %s" % (n, res)
 
         #  Acquire the cloud data
         sql = 'SELECT c_date, cloud FROM %s WHERE c_date >= %d AND c_date <= %d' \
             % (self.dbTableDict['cloud'], adjustedStart, adjustedEnd)
         (n, res) = self.lsstDB.executeSQL(sql)
-        #print "n = %d, res = %s" % (n, res)
+        # print "n = %d, res = %s" % (n, res)
 
         i = 1
         self.currentIdx = i
@@ -197,17 +199,17 @@ class Weather(LSSTObject):
             self.tonightClouds[i] = (c_date, cloud)
             i += 1
 
-        #print "Weather.tonightClouds for start=%d to end=%d" % (startNight, endNight)
-        #print self.tonightClouds
+        # print "Weather.tonightClouds for start=%d to end=%d" % (startNight, endNight)
+        # print self.tonightClouds
 
         if len(self.tonightClouds) != 0:
             (self.currentDate, self.currentCloud) = self.tonightClouds.pop(self.currentIdx)
             nextDate = self.tonightClouds[self.currentIdx + 1][0]
             self.interval = (nextDate - self.currentDate) / 2
             self.currentIdx += 1
-            #print "after pop self.tonightClouds()"
-            #print self.tonightClouds
-            #print "nextDate = %d, interval = %d" % (nextDate, self.interval)
+            # print "after pop self.tonightClouds()"
+            # print self.tonightClouds
+            # print "nextDate = %d, interval = %d" % (nextDate, self.interval)
         return
 
     def getTransparency(self, date):
@@ -228,12 +230,12 @@ class Weather(LSSTObject):
             if len(self.tonightClouds) != 0:
                 nextDate = self.tonightClouds[self.currentIdx][0]
                 self.interval = (nextDate - self.currentDate) / 2
-                #print "nextDate = %d, interval = %d" % (nextDate, self.interval)
+                # print "nextDate = %d, interval = %d" % (nextDate, self.interval)
             # there is no next entry
             else:
                 self.interval = 0
 
-        #print "use current cloud = %f currentIdx = %d " % (self.currentCloud, self.currentIdx)
+        # print "use current cloud = %f currentIdx = %d " % (self.currentCloud, self.currentIdx)
         return (self.currentCloud)
 
 # TESTS

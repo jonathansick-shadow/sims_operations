@@ -134,8 +134,11 @@ import heapq
 #filterOffset['i',100.] = -0.47
 #filterOffset['z',100.] = -1.16
 
-#class Proposal (Simulation.Process):
+# class Proposal (Simulation.Process):
+
+
 class Proposal(object):
+
     def __init__(self, lsstDB, propConf, propName, propFullName, sky, weather, sessionID, filters,
                  targetList=None, dbTableDict=None, log=False, logfile='./Proposal.log', verbose=0):
         """
@@ -451,8 +454,8 @@ class Proposal(object):
         # Get the object ID of self
         self.objID = id(self)
 
-        ## Remove data from the previous run where session, host and object are
-        ## the same. This should not happen but seems to sometimes ....
+        # Remove data from the previous run where session, host and object are
+        # the same. This should not happen but seems to sometimes ....
         #sql = 'DELETE FROM %s WHERE ' % (self.dbTableDict["proposal"])
         #sql += 'sessionId=%d AND ' % (self.sessionID)
         #sql += 'objectHost="%s" AND ' % (self.host)
@@ -730,7 +733,7 @@ class Proposal(object):
         if self.log and self.verbose > 1:
             self.log.info('Proposal: closeObservation() propID=%d' % (self.propID))
 
-        #self.log.info("Proposal:closeObs: #winners:%d #losers:%d" %( len(self.winners),len(self.loosers)))
+        # self.log.info("Proposal:closeObs: #winners:%d #losers:%d" %( len(self.winners),len(self.loosers)))
 
         self.last_observed_fieldID = obs.fieldID
         self.last_observed_filter = obs.filter
@@ -805,7 +808,7 @@ class Proposal(object):
             #                          moonProfile,
             #                          twilightProfile)
 
-            #print "latest skyBright = %f\toriginal skyBright = %f" % (skyBright, obsfound.skyBrightness)
+            # print "latest skyBright = %f\toriginal skyBright = %f" % (skyBright, obsfound.skyBrightness)
 
             # (obsfound.phaseAngle, obsfound.extinction, obsfound.rScatter,
             #     obsfound.mieScatter, obsfound.moonIllum,
@@ -935,7 +938,7 @@ class Proposal(object):
                 break
 
         # ZZZ - MM commented out. Why should we sort the list by fieldID?
-        #self.winners.sort(compareWinners)
+        # self.winners.sort(compareWinners)
         self.loosers = []
         while self.AcceptSerendipity:
             try:

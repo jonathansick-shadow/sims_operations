@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 ##########################################################################
-# This script and all of the supporting infrastructure is taken from the 
-# qserv package with much appreciation! It was modified to fit the needs 
+# This script and all of the supporting infrastructure is taken from the
+# qserv package with much appreciation! It was modified to fit the needs
 # of this package.
 ##########################################################################
 
@@ -15,6 +15,7 @@ import os
 import shutil
 from subprocess import check_output
 import sys
+
 
 def parseArgs():
     default_opsim_run_dir = os.path.join(os.path.expanduser("~"), "opsim-run")
@@ -93,6 +94,7 @@ def parseArgs():
     args.verbose_level = verbose_dict[args.verbose_str]
 
     return args
+
 
 def main():
 

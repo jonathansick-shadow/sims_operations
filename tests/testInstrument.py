@@ -4,6 +4,7 @@ import lsst.sims.operations.Database as DB
 import lsst.sims.operations.Instrument as Inst
 import lsst.sims.operations.utilities as utilities
 
+
 class TestInstrument(unittest.TestCase):
 
     def setUp(self):

@@ -79,9 +79,12 @@ ZENITH_RAD = math.radians(90)
 DefaultConfigFile = "./Instrument.conf"
 
 ######################################################################
+
+
 class InstrumentParams(object):
     # This class is used as a data structure to store all the "construction"
     # or design parameters for the dome-telescope-instrument-camera set.
+
     def __init__(self, latitude_RAD, longitude_RAD, height):
         # meters
         self.Height = height
@@ -91,6 +94,8 @@ class InstrumentParams(object):
         self.longitude_RAD = longitude_RAD
 
 ######################################################################
+
+
 class InstrumentPosition(object):
 
     def __init__(self, ra_RAD=0.0, dec_RAD=0.0, angle_RAD=0.0, filter='r', exptime=0.0, time=0.0,
@@ -127,7 +132,10 @@ class InstrumentPosition(object):
                  newpos.TIME, newpos.ALT_RAD, newpos.AZ_RAD, newpos.PA_RAD)
 
 ######################################################################
+
+
 class dataSlew(object):
+
     def __init__(self, slewCount=0, startDate=0, endDate=0, slewTime=0.0, slewDist=0.0):
 
         self.slewCount = slewCount
@@ -138,7 +146,10 @@ class dataSlew(object):
 
 SLEWINITSTATE = 0
 SLEWFINALSTATE = 1
+
+
 class stateSlew(object):
+
     def __init__(self, slewStateDate=0, tra=0.0, tdec=0.0, tracking="False", alt=0.0, az=0.0, pa=0.0,
                  DomAlt=0.0, DomAz=0.0, TelAlt=0.0, TelAz=0.0, RotTelPos=0.0, Filter="r",
                  state=SLEWINITSTATE):
@@ -158,7 +169,9 @@ class stateSlew(object):
         self.Filter = Filter
         self.state = state
 
+
 class speedsSlew(object):
+
     def __init__(self, DomAltSpd=0.0, DomAzSpd=0.0, TelAltSpd=0.0, TelAzSpd=0.0, RotSpd=0.0):
 
         self.DomAltSpd = DomAltSpd
@@ -167,7 +180,9 @@ class speedsSlew(object):
         self.TelAzSpd = TelAzSpd
         self.RotSpd = RotSpd
 
+
 class activitySlew(object):
+
     def __init__(self, activity="", actDelay=0.0, inCriticalPath="False"):
 
         self.activity = activity
@@ -175,9 +190,12 @@ class activitySlew(object):
         self.inCriticalPath = inCriticalPath
 
 ######################################################################
+
+
 class InstrumentState(InstrumentPosition):
     # This class describes a state of all the moving systems in Instrument.
     # The default values correspond to a Park position.
+
     def __init__(self, alt_RAD=1.553343, az_RAD=0.0, pa_RAD=0.0, filter='r', exptime=0.0, ra=0.0, dec=0.0,
                  time=0.0, config_dict=None, instrumentConf=None,
                  obsProfile=(-70.59 * DEG2RAD, -29.67 * DEG2RAD, 2737, 49353, 0, 0, 0)):
@@ -228,7 +246,7 @@ class InstrumentState(InstrumentPosition):
         self.Filter_MountedList = config_dict["Filter_Mounted"]
         self.Filter_MountedTotal = len(self.Filter_MountedList)
         self.Filter_Pos = config_dict["Filter_Pos"]
-        #print "Mounted Filters list = "+str(self.Filter_MountedList)
+        # print "Mounted Filters list = "+str(self.Filter_MountedList)
 
         if "Filter_Removable" in config_dict:
             self.Filter_RemovableList = config_dict["Filter_Removable"]
@@ -236,7 +254,7 @@ class InstrumentState(InstrumentPosition):
                 self.Filter_RemovableList = [self.Filter_RemovableList]
         else:
             self.Filter_RemovableList = []
-        #print "Removable Filters list = "+str(self.Filter_RemovableList)
+        # print "Removable Filters list = "+str(self.Filter_RemovableList)
 
         if "Filter_Unmounted" in config_dict:
             self.Filter_UnmountedList = config_dict["Filter_Unmounted"]
@@ -244,7 +262,7 @@ class InstrumentState(InstrumentPosition):
                 self.Filter_UnmountedList = [self.Filter_UnmountedList]
         else:
             self.Filter_UnmountedList = []
-        #print "Unmounted Filters list = "+str(self.Filter_UnmountedList)
+        # print "Unmounted Filters list = "+str(self.Filter_UnmountedList)
 
         self.ADC_Pos = 0.0
 
@@ -344,7 +362,7 @@ class InstrumentState(InstrumentPosition):
     def MountFilter(self, newfilter=None, oldfilter=None):
 
         if newfilter is None:
-            #for filter in self.Filter_DefinedList:
+            # for filter in self.Filter_DefinedList:
             #    if not self.IsFilterMounted(filter):
             #        break
             #newf = filter
@@ -483,7 +501,7 @@ class InstrumentState(InstrumentPosition):
         """
 
         UT_day = self.simEpoch + DATE / 86400.0
-        #RAA  changed to conform to LSST convention of West=negative, East=pos
+        # RAA  changed to conform to LSST convention of West=negative, East=pos
         #LST_RAD  = slalib.sla_gmst(UT_day) + self.longitude_RAD
         LST_RAD = pal.gmst(UT_day) + self.longitude_RAD
 
@@ -517,6 +535,8 @@ class InstrumentState(InstrumentPosition):
             self.Tracking = False
 
 ######################################################################
+
+
 class InstrumentSlewParams (object):
     # This class stores all the cinematic and timing parameters
     # involved in the computation of the slew time.
@@ -622,12 +642,15 @@ class InstrumentSlewParams (object):
         self.Telescope_AltMax_RAD = eval(str(config_dict["Telescope_AltMax"])) * DEG2RAD
 
 ######################################################################
-#class Instrument (Simulation.Process):
+# class Instrument (Simulation.Process):
+
+
 class Instrument(object):
     """
     This class involves status, interaction and timing for the activities
     in the Instrument and the Telescope for a given exposure request.
     """
+
     def __init__(self, lsstDB, sessionID, dbTableDict, obsProfile, instrumentConf=DefaultConfigFile,
                  log=False, logfile="./Instrument.log", verbose=0):
 
@@ -663,7 +686,7 @@ class Instrument(object):
         if verbose < 0:
             logfile = "/dev/null"
         elif not log:
-            #print "Setting up Instrument logger"
+            # print "Setting up Instrument logger"
             log = logging.getLogger("Instrument")
             hdlr = logging.FileHandler(logfile)
             formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
@@ -1012,7 +1035,7 @@ class Instrument(object):
                 # gets the following activity in the critical path
                 activity = self.longest_prereq_for[activity]
 
-            #if self.log and self.verbose>0:
+            # if self.log and self.verbose>0:
             #     self.log.info("Instrument: GetSlewDelay(): all delays: %s" % (self.all))
             #     self.log.info("Instrument: GetSlewDelay(): critical path: %s" % (self.critical_path))
 
@@ -1045,8 +1068,8 @@ class Instrument(object):
                 self.log.info("Filter Change t=%d from %s to %s Burst=%d in %3.1f minutes Avg=%d in %3.1f "
                               "days" % (new_position.TIME, self.current_state.Filter_Pos,
                                         new_position.Filter_Pos, bn, bt / 60.0, an, at / 24 / 3600.0))
-            #print self.filterChangesTimeHistory
-            #print self.filterChangesHistory
+            # print self.filterChangesTimeHistory
+            # print self.filterChangesHistory
 
         new_state.Tracking = True
         self.SetState(new_state)

@@ -4,7 +4,9 @@ import unittest
 import lsst.sims.operations.Database as DB
 import lsst.sims.operations.Filters as F
 
+
 class TestFilters(unittest.TestCase):
+
     def setUp(self):
         """
         Setup necessary objects for creating a Filters object.

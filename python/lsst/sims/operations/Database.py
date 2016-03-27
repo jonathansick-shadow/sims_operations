@@ -6,67 +6,89 @@ import time
 import MySQLdb
 from exceptions import *
 
+
 class Opsim_Cloud(object):
     pass
+
 
 class Opsim_Config(object):
     pass
 
+
 class Opsim_Config_File(object):
     pass
+
 
 class Opsim_Field(object):
     pass
 
+
 class Opsim_Log(object):
     pass
+
 
 class Opsim_ObsHistory(object):
     pass
 
+
 class Opsim_MissedHistory(object):
     pass
+
 
 class Opsim_ObsHistory_Proposal(object):
     pass
 
+
 class Opsim_Proposal(object):
     pass
+
 
 class Opsim_Proposal_Field(object):
     pass
 
+
 class Opsim_Seeing(object):
     pass
+
 
 class Opsim_SeqHistory(object):
     pass
 
+
 class Opsim_SeqHistory_ObsHistory(object):
     pass
+
 
 class Opsim_SeqHistory_MissedHistory(object):
     pass
 
+
 class Opsim_Session(object):
     pass
+
 
 class Opsim_SlewActivities(object):
     pass
 
+
 class Opsim_SlewHistory(object):
     pass
+
 
 class Opsim_SlewMaxSpeeds(object):
     pass
 
+
 class Opsim_SlewState(object):
     pass
+
 
 class Opsim_TimeHistory(object):
     pass
 
+
 class Database:
+
     def __init__(self, dbWrite, dbConnect=True):
 
         self.dbWrite = dbWrite
@@ -107,15 +129,15 @@ class Database:
         done = False
         t0 = time.time()
         timeout = 10
-        #print "We are going to connect to DB"
-        #self.openConnection()
+        # print "We are going to connect to DB"
+        # self.openConnection()
         while not done:
             # Here until handling exceptions better is done.
             #self.connection = self.openConnection ()
             try:
                 self.connection = self.openConnection()
                 done = True
-            #print "Open connection"
+            # print "Open connection"
             except:
                 if time.time() - t0 > timeout:
                     raise (IOError, 'Connection to the database failed.')

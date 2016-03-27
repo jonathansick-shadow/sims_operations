@@ -35,10 +35,12 @@ SEQ_ACTIVE = 1
 SEQ_COMPLETE = 2
 SEQ_LOST = 3
 
+
 class SubSequence(LSSTObject):
     """
     Base class for the Sequence hiarchy.
     """
+
     def __init__(self, propID, field, WLtype, numGroupedVisits, subName, subNested, subFilters, subExposures,
                  subEvents, subMaxMissed, subInterval, subWindowStart, subWindowMax, subWindowEnd):
 
@@ -297,18 +299,18 @@ class SubSequence(LSSTObject):
                 self.nestedSubSequence.Restart()
 
         self.exposuresLeft -= 1
-        #print "exposures left = " + str(self.exposuresLeft)
+        # print "exposures left = " + str(self.exposuresLeft)
         if self.exposuresLeft > 0:
             self.UpdateState()
             return False
 
         self.subeventIndex += 1
-        #print "subevent index = " + str(self.subeventIndex)
-        #print "Nsubevents = " + str(self.Nsubevents)
+        # print "subevent index = " + str(self.subeventIndex)
+        # print "Nsubevents = " + str(self.Nsubevents)
         if self.subeventIndex < self.Nsubevents:
             self.exposuresLeft = self.subExposures[self.subeventIndex]
-            #print "left = " + str(self.exposuresLeft)
-            #print 'subeventIndex<Nsubevents '+str(self.subeventIndex)+'<'+str(self.Nsubevents)
+            # print "left = " + str(self.exposuresLeft)
+            # print 'subeventIndex<Nsubevents '+str(self.subeventIndex)+'<'+str(self.Nsubevents)
             self.UpdateState()
             return False
 
@@ -390,10 +392,12 @@ class SubSequence(LSSTObject):
         else:
             return self.subMaxMissed - self.nMisEvents
 
+
 class SuperSequence(LSSTObject):
     """
     Base class for the Sequence hiarchy.
     """
+
     def __init__(self, propID, field, seqNum, WLtype, numGroupedVisits, masterSubSequence, subSeqName,
                  subSeqNested, subSeqFilters, subSeqExposures, subSeqEvents, subSeqMaxMissed, subSeqInterval,
                  subSeqWindowStart, subSeqWindowMax, subSeqWindowEnd, overflowLevel=0.0,
@@ -441,7 +445,7 @@ class SuperSequence(LSSTObject):
 
         self.subSequence = {}
 
-        #first create all the subsequences
+        # first create all the subsequences
         for n in range(len(self.subSeqName)):
             name = self.subSeqName[n]
             nested = self.subSeqNested[n]
@@ -462,7 +466,7 @@ class SuperSequence(LSSTObject):
                                                  self.subSeqWindowMax[n],
                                                  self.subSeqWindowEnd[n])
 
-        #second find the nested subsequences and attaches them
+        # second find the nested subsequences and attaches them
         nestedlist = []
         # for subseq in self.subSequence.keys():
         for subseq in sorted(self.subSequence.iterkeys()):
@@ -471,7 +475,7 @@ class SuperSequence(LSSTObject):
                 nestedsubseq = self.subSequence[nested]
                 self.subSequence[subseq].attachNestedSubSequence(nestedsubseq)
                 nestedlist.append(nested)
-        #third leaves only the first level subsequences in the dictionary
+        # third leaves only the first level subsequences in the dictionary
         for nested in nestedlist:
             del self.subSequence[nested]
             self.subSeqName.remove(nested)

@@ -21,7 +21,9 @@ DB Access
 from utilities import *
 from LSSTObject import *
 
+
 class TimeHistory(LSSTObject):
+
     def __init__(self, lsstDB, dbTableDict=None, log=False, logfile='./TimeHistory.log', verbose=0):
         """
         Standard initializer.
@@ -55,7 +57,7 @@ class TimeHistory(LSSTObject):
 
         if self.log and self.verbose > 1:
             self.log.info('TimeHistory: init()')
-            #for key in self.dbTableDict:
+            # for key in self.dbTableDict:
             #    print "TimeHistory:    Database tables: " + key,self.dbTableDict[key]
         return
 

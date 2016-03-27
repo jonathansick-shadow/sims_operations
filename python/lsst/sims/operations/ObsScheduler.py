@@ -43,7 +43,9 @@ from TimeHistory import *
 import copy
 import heapq
 
+
 class ObsScheduler(LSSTObject):
+
     def __init__(self, lsstDB, schedulingData, obsProfile, dbTableDict, telescope, weather, sky, filters,
                  sessionID, runSeeingFudge, schedulerConf, log=False, logfile='./ObsScheduler.log',
                  verbose=0):
@@ -310,7 +312,7 @@ class ObsScheduler(LSSTObject):
         # If NmaxFiltersToSwap > NminFiltersToSwap, selects additional filters to swap,
         # if there are insertable filters in more need than the removable ones.
         for k in range(min(self.NmaxFiltersToSwap - self.NminFiltersToSwap, len(removequeue),
-                       len(insertqueue))):
+                           len(insertqueue))):
             removable = heapq.heappop(removequeue)
             removable_need = removable[0]
             removable_filter = removable[1]
@@ -378,7 +380,7 @@ class ObsScheduler(LSSTObject):
         (rank, exposureTime, slewTime)
         """
 
-        #if ( self.log) :
+        # if ( self.log) :
         #    self.log.info("obsScheduler:suggestObservation: date: %f recalcSky: %d" % (date, self.recalcSky))
 
         self.dateProfile = dateProfile
@@ -619,7 +621,7 @@ class ObsScheduler(LSSTObject):
             listslewactivities) = self.telescope.Observe(winner.ra * DEG2RAD, winner.dec * DEG2RAD,
                                                          self.dateProfile, winner.exposureTime,
                                                          winner.filter, winner.slewTime)
-        #print "SUCCESS: delay:%f rotSkyPos:%f rotTelPos:%f" % (delay,rotator_skypos_RAD,rotator_telpos_RAD)
+        # print "SUCCESS: delay:%f rotSkyPos:%f rotTelPos:%f" % (delay,rotator_skypos_RAD,rotator_telpos_RAD)
 
         # MM - debug error check
         if delay != winner.slewTime:

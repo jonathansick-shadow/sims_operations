@@ -16,6 +16,7 @@ class WeakLensingProp(Proposal):
     It does not care about particular fields, filters or anythin else,
     just seeing and slew time.
     """
+
     def __init__(self, lsstDB, schedulingData, sky, weather, sessionID, filters, fov,
                  weakLensConf=DefaultWLConfigFile, targetList=None, dbTableDict=None, log=True,
                  logfile='./Proposal.log', verbose=0):
@@ -472,49 +473,49 @@ class WeakLensingProp(Proposal):
 
             filterSeeingList = self.filters.computeFilterSeeing(seeing, airmass)
             for filter in self.schedulingData.visible[sdtime][field][self.propID]:
-                    availableTime = self.schedulingData.visibleTime[field][filter][self.propID]
-                    if availableTime <= 0:
-                        ffilter_notime += 1
-                        continue
-                    fieldTime += availableTime
+                availableTime = self.schedulingData.visibleTime[field][filter][self.propID]
+                if availableTime <= 0:
+                    ffilter_notime += 1
+                    continue
+                fieldTime += availableTime
 
-                    if filterSeeingList[filter] > self.FilterMaxSeeing[filter]:
-                        ffilter_badseeing += 1
-                        fieldNeed = -1
-                        continue
+                if filterSeeingList[filter] > self.FilterMaxSeeing[filter]:
+                    ffilter_badseeing += 1
+                    fieldNeed = -1
+                    continue
 
-                    if field not in self.visits[filter].keys():
-                        self.visits[filter][field] = 0
-                    numerator = self.GoalVisitsFieldFilter[filter] - self.visits[filter][field]
-                    targetNeed = numerator / availableTime
-                    if targetNeed <= 0.0:
-                        ffilter_noneed += 1
-                        continue
-                    fieldNeed += targetNeed
+                if field not in self.visits[filter].keys():
+                    self.visits[filter][field] = 0
+                numerator = self.GoalVisitsFieldFilter[filter] - self.visits[filter][field]
+                targetNeed = numerator / availableTime
+                if targetNeed <= 0.0:
+                    ffilter_noneed += 1
+                    continue
+                fieldNeed += targetNeed
 
-                    maxTargetNeed = max(targetNeed, maxTargetNeed)
-                    ffilter_proposed += 1
-                    recordFieldFilter = self.obsPool[field][filter]
-                    recordFieldFilter.date = date
-                    recordFieldFilter.mjd = mjd
-                    recordFieldFilter.night = sdnight
-                    recordFieldFilter.propRank = targetNeed
-                    recordFieldFilter.rawSeeing = rawSeeing
-                    recordFieldFilter.seeing = filterSeeingList[filter]
-                    recordFieldFilter.transparency = transparency
-                    recordFieldFilter.airmass = airmass
-                    recordFieldFilter.skyBrightness = self.schedulingData.brightness[sdtime][field]
-                    recordFieldFilter.filterSkyBright = 0.0
-                    recordFieldFilter.lst = lst_RAD
-                    recordFieldFilter.altitude = self.schedulingData.alt[sdtime][field]
-                    recordFieldFilter.azimuth = self.schedulingData.az[sdtime][field]
-                    recordFieldFilter.parallactic = self.schedulingData.pa[sdtime][field]
-                    recordFieldFilter.distance2moon = distance2moon
-                    recordFieldFilter.moonRA = moonRA_RAD
-                    recordFieldFilter.moonDec = moonDec_RAD
-                    recordFieldFilter.moonPhase = moonPhase_PERCENT
+                maxTargetNeed = max(targetNeed, maxTargetNeed)
+                ffilter_proposed += 1
+                recordFieldFilter = self.obsPool[field][filter]
+                recordFieldFilter.date = date
+                recordFieldFilter.mjd = mjd
+                recordFieldFilter.night = sdnight
+                recordFieldFilter.propRank = targetNeed
+                recordFieldFilter.rawSeeing = rawSeeing
+                recordFieldFilter.seeing = filterSeeingList[filter]
+                recordFieldFilter.transparency = transparency
+                recordFieldFilter.airmass = airmass
+                recordFieldFilter.skyBrightness = self.schedulingData.brightness[sdtime][field]
+                recordFieldFilter.filterSkyBright = 0.0
+                recordFieldFilter.lst = lst_RAD
+                recordFieldFilter.altitude = self.schedulingData.alt[sdtime][field]
+                recordFieldFilter.azimuth = self.schedulingData.az[sdtime][field]
+                recordFieldFilter.parallactic = self.schedulingData.pa[sdtime][field]
+                recordFieldFilter.distance2moon = distance2moon
+                recordFieldFilter.moonRA = moonRA_RAD
+                recordFieldFilter.moonDec = moonDec_RAD
+                recordFieldFilter.moonPhase = moonPhase_PERCENT
 
-                    listOfProposedTargets.append(recordFieldFilter)
+                listOfProposedTargets.append(recordFieldFilter)
 
             if fieldTime == 0:
                 # the field is invisible for all its filters during the look ahead window
@@ -665,7 +666,7 @@ class WeakLensingProp(Proposal):
         Return
         fields      A dictionary of the form {fieldID: (ra, dec)}
         """
-        ## Benchmark memory use - start
+        # Benchmark memory use - start
         #m0 = memory()
         #r0 = resident()
         #s0 = stacksize()
@@ -694,9 +695,9 @@ class WeakLensingProp(Proposal):
         #(sunRise, sunSet) = s.nauticalTwilight (yy, mm, dd, lon_RAD*RAD2DEG, lat_RAD*RAD2DEG)
 
         # RAA following overkill for simulation
-        #if (date >= sunSet):            # Beginning of the night
+        # if (date >= sunSet):            # Beginning of the night
         #    (sunRise, dummy) = s.nauticalTwilight (yy, mm, dd+1, lon_DEG, lat_DEG)
-        #else:                           # End of the night
+        # else:                           # End of the night
         #    (dummy, sunSet) = s.nauticalTwilight (yy, mm, dd-1, lon_DEG, lat_DEG)
 
         # Compute RA min (at twilight)
@@ -780,12 +781,12 @@ class WeakLensingProp(Proposal):
             for field in self.visits[filter].keys():
                 if field in self.targets:
                     self.VisitsTonight += self.visits[filter][field]
-                    #print field
+                    # print field
         # print('Visits up to Tonight for propID=%d for current targets = %i' %
         #       (self.propID, self.VisitsTonight))
         print('*** Found %d WL fields for propID=%d ***' % (len(res), self.propID))
 
-        ## Benchmark memory use - exit
+        # Benchmark memory use - exit
         #m1 = memory()
         #r1 = resident()
         #s1 = stacksize()

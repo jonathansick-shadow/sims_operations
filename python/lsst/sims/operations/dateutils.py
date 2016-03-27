@@ -11,9 +11,9 @@
 import math
 import sys
 
-#try:
+# try:
 #    import slalib
-#except:
+# except:
 #    import pysla as slalib
 
 import palpy as pal
@@ -50,11 +50,14 @@ months = {1: 'January',
           12: 'December'}
 
 # utility functions
+
+
 def isLeap(year):
     """
     Return 1 if year is a leap year, 0 otherwise.
     """
     return (year % 4 == 0 and not (year % 100 == 0 and year % 400 != 0))
+
 
 def isValid(y, m, d):
     """
@@ -72,6 +75,7 @@ def isValid(y, m, d):
         return -1
     days['February'] = 28
     return t
+
 
 def gre2mjd(date):
     """
@@ -117,12 +121,13 @@ def gre2mjd(date):
 
     return mjd
 
+
 def mjd2gre(mjd):
     # Use SLALIB to convert from MJD to (year, month, day)
     #(year, month, day, fraction, error) = slalib.sla_djcl (mjd)
     (year, month, day, fraction) = pal.djcl(mjd)
 
-    #if (error):
+    # if (error):
     #    msg = 'Fatal error: MJD must correspond to a date later than 4701BC March 1'
     #    raise (SyntaxError, msg)
 
@@ -131,6 +136,7 @@ def mjd2gre(mjd):
     mm = math.floor(1440. * (fraction - hh / 24.))
     ss = 86400. * (fraction - hh / 24. - mm / 1440.)
     return (year, month, day, int(hh), int(mm), ss)
+
 
 def gre2frac(date):
     """
@@ -159,12 +165,14 @@ def gre2frac(date):
     d += 275. * int(month) / 9 + day - 730530. + (ut / 24.)
     return d
 
+
 def computeEclipticAngle(d):
     """
     Given a date expressed in fractional days, compute the obliquity
     of the ecliptic.
     """
     return 23.4393 - 3.563E-7 * d
+
 
 def normalize(angle, min=0., max=None, degrees=True):
     """
@@ -199,6 +207,7 @@ def normalize(angle, min=0., max=None, degrees=True):
     while angle > max:
         angle -= addit
     return angle
+
 
 def dist(Ra1, Dec1, Ra2, Dec2):
     """

@@ -4,7 +4,9 @@ import SCons.Util
 
 import utils
 
+
 class Find(object):
+
     def __init__(self):
         self.log = utils.Log()
 

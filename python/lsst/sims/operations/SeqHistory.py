@@ -27,33 +27,33 @@ from LSSTObject import *
 from Observation import *
 
 
-
 class SeqHistory (LSSTObject):
-    def __init__ (self,
-		  lsstDB, 
-                  dbTableDict=None,
-                  log=False,
-                  logfile='./SeqHistory.log',
-                  verbose=0):
+
+    def __init__(self,
+                 lsstDB,
+                 dbTableDict=None,
+                 log=False,
+                 logfile='./SeqHistory.log',
+                 verbose=0):
         """
         Standard initializer.
-        
-	lsstDB      LSST DB access object        
-	dbTableDict:
+
+        lsstDB      LSST DB access object        
+        dbTableDict:
         log:        False if not set; else log = logging.getLogger("....")
         logfile:    name (and path) of the desired log file 
                     (defaults to ./SeqHistory.log)
         verbose:    integer specifying the verbosity level (defaults to 0).
                     -1=none, 0=min, 1=wordy, >1=very verbose
- 
+
         """
-	self.lsstDB = lsstDB        
-	self.dbTableDict = dbTableDict
+        self.lsstDB = lsstDB
+        self.dbTableDict = dbTableDict
 
         # Setup logging
         if (verbose < 0):
             logfile = "/dev/null"
-        elif ( not log ):
+        elif (not log):
             print "Setting up SeqHistory logger"
             log = logging.getLogger("Simulator")
             hdlr = logging.FileHandler(logfile)
@@ -65,71 +65,69 @@ class SeqHistory (LSSTObject):
         self.logfile = logfile
         self.verbose = verbose
 
-        if ( self.log and self.verbose > 1):
+        if (self.log and self.verbose > 1):
             self.log.info('SeqHistory: init()')
-            #for key in self.dbTableDict:
+            # for key in self.dbTableDict:
             #    print "SeqHistory:    Database tables: " + key,self.dbTableDict[key]
         return
-    
-    
+
     # DB Access methods
-    def addSequence (self, seq, fieldID, sessionID,obsdate,status):
+    def addSequence(self, seq, fieldID, sessionID, obsdate, status):
         """
         Ingest the given Observation instance into the database.
-        
+
         Input
         seq         Sequence instance.
         sessionID:  An integer identifying this particular run.
         obsdate:    date of final event
         status:     reason for sequence completion
-        
+
         Return
         None
-        
+
         Raise
         Exception in case of error in the ingestion procedure.
         """
-        if ( self.log and self.verbose > 1):
+        if (self.log and self.verbose > 1):
             self.log.info('SeqHistory: addObservation(): dbTableKey:%s' % (self.dbTableDict['seqHistory']))
-        
+
         numRequestedEvents = seq.GetNumTargetEvents()
-        numActualEvents    = seq.GetNumActualEvents()
+        numActualEvents = seq.GetNumActualEvents()
         tmpSeqHistoryDB = self.dbTableDict['seqHistory']
         sql = "INSERT INTO %s VALUES (NULL, %d, %d, %d, %d, %d, %d, %f, %d, %d, '%d')" \
-            % ( self.dbTableDict['seqHistory'],\
-                sessionID,\
-                seq.date,\
-                obsdate,\
-                seq.propID,\
-                fieldID,\
-		seq.seqNum,
+            % (self.dbTableDict['seqHistory'],
+                sessionID,
+                seq.date,
+                obsdate,
+                seq.propID,
+                fieldID,
+                seq.seqNum,
                 seq.GetProgress(),
                 numRequestedEvents,
                 numActualEvents,
                 status)
-        
+
 #        (n, dummy) = self.lsstDB.executeSQL (sql)
         return
-    
-    
-    def cleanupProposal (self, 
-                         propID, 
-                         sessionID):
+
+    def cleanupProposal(self,
+                        propID,
+                        sessionID):
         """
         Cleans up the SeqHistory database by removing all the entries 
         relative to a given proposal ID.
-        
+
         Input
         propID:     An integer identifying a particular proposal.
         sessionID:  An integer identifying this particular run.
-        
+
         Return
         None
-        
+
         Raise
         Exception in case of error in the ingestion procedure.
         """
-        if ( self.log and self.verbose > 1):
+        if (self.log and self.verbose > 1):
             self.log.info('SeqHistory: cleanupProposal()')
 
 #        sql = 'DELETE FROM %s WHERE ' % (self.dbTableDict['seqHistory'])
@@ -138,8 +136,8 @@ class SeqHistory (LSSTObject):
 #
 #        (n, res) = self.lsstDB.executeSQL (sql)
         return
-    
-    
+
+
 # TESTS
 if (__name__ == '__main__'):
     pass

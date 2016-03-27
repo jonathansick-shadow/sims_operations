@@ -2,10 +2,12 @@
 
 from TransSubSeqProp import *
 
+
 class WLprop (TransSubSeqProp):
     """
     This class is here to describe a Super Nova Objects (SN) case scenario.
     """
+
     def __init__(self, lsstDB, schedulingData, sky, weather, sessionID, filters, targetList=None,
                  dbTableDict=None, log=False, logfile='./WLprop.log', verbose=0,
                  WLpropConf=DefaultWLConfigFile):
@@ -86,7 +88,7 @@ class WLprop (TransSubSeqProp):
             self.subSeqName = self.subSeqFilters
         if not isinstance(self.subSeqName, list):
             self.subSeqName = [self.subSeqName]
-        #print 'subsequences names = '+str(self.subSeqName[:])
+        # print 'subsequences names = '+str(self.subSeqName[:])
 
         try:
             self.subSeqNested = (config_dict['SubSeqNested'])
@@ -350,7 +352,7 @@ class WLprop (TransSubSeqProp):
         Return
         fields      A dictionary of the form {fieldID: (ra, dec)}
         """
-        ## Benchmark memory use - start
+        # Benchmark memory use - start
         #m0 = memory()
         #r0 = resident()
         #s0 = stacksize()
@@ -375,9 +377,9 @@ class WLprop (TransSubSeqProp):
         #(sunRise, sunSet) = s.nauticalTwilight (yy, mm, dd, lon_RAD*RAD2DEG, lat_RAD*RAD2DEG)
 
         # RAA following overkill for simulation
-        #if (date >= sunSet):            # Beginning of the night
+        # if (date >= sunSet):            # Beginning of the night
         #    (sunRise, dummy) = s.nauticalTwilight (yy, mm, dd+1, lon_DEG, lat_DEG)
-        #else:                           # End of the night
+        # else:                           # End of the night
         #    (dummy, sunSet) = s.nauticalTwilight (yy, mm, dd-1, lon_DEG, lat_DEG)
 
         # Compute RA min (at twilight)
@@ -482,7 +484,7 @@ class WLprop (TransSubSeqProp):
         self.targetsNewSeq = fields.copy()
         print('*** Found %d WLTSS fields for propID=%d for new sequences ***' % (len(res), self.propID))
 
-        ## Benchmark memory use - exit
+        # Benchmark memory use - exit
         #m1 = memory()
         #r1 = resident()
         #s1 = stacksize()

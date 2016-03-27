@@ -15,9 +15,9 @@ import sys
 # from SimPy.Monitor import Monitor
 
 # Third-party includes
-#try:
+# try:
 #    import slalib
-#except:
+# except:
 #    import pysla as slalib
 import palpy as pal
 
@@ -44,7 +44,7 @@ except:
         3. This is a fallback solution in case an optimized version of this
            routine does not exist.
         """
-        #return([slalib.sla_dsep(field0[0], field0[1], field[0], field[1]) for field in fields])
+        # return([slalib.sla_dsep(field0[0], field0[1], field[0], field[1]) for field in fields])
         return ([pal.dsep(field0[0], field0[1], field[0], field[1]) for field in fields])
 
 # Simulator specific includes
@@ -116,6 +116,7 @@ _config_line_re = re.compile(r'^\s*(\w+\[*\w*\]*\s*=\s*[^#]+)(.*)')
 # RE to extract key and value - LD (MM modification)
 _config_item_re = re.compile(r'^\s*(\w+\[*\w*\]*)\s*=\s*(\S+)')
 
+
 def warning(msg):
     """
     Print a warning (i.e. a non fatal error) to STDOUT.
@@ -186,6 +187,7 @@ def fatalError(errorMessage, exitCode=1):
         sys.stderr.write('Fatal Error: something went wrong.\n')
     sys.exit(exitCode)
     return
+
 
 def sex2deg(sex, sep=':'):
     """
@@ -333,7 +335,7 @@ def storeParam(lsstDB, sessionID, propID, moduleName, paramIndex, paramName, par
     #    (n, dummy) = lsstDB.executeSQL(sql)
     lsstDB.addConfig(sessionID, propID, moduleName, paramIndex, paramName, paramValue, comment)
 
-#def computeDateProfile (obsProfile, date):
+# def computeDateProfile (obsProfile, date):
     """
     Convert Simulator seconds to an MJD and LST for observatory location
     and epoch.
@@ -369,6 +371,7 @@ _secmap = {
 
 _timeStr_re = re.compile(r'([-+]?[\d]*\.?[\d]+)\s*([a-z]*)', re.IGNORECASE)
 
+
 def timeStr2Sec(time_str):
     """
     Convert a time interval specification to seconds.  Allow
@@ -397,6 +400,7 @@ def timeStr2Sec(time_str):
         else:
             sec += float(s)                             # no unit suffix; assume sec
     return sec
+
 
 def compareWinners(a, b):
     # Sort top proposal targets by lowest airmass, then darkest sky brightness,
@@ -438,6 +442,7 @@ _proc_status = '/proc/%d/status' % os.getpid()
 _scale = {'kB': 1024.0, 'mB': 1024.0 * 1024.0,
           'KB': 1024.0, 'MB': 1024.0 * 1024.0}
 
+
 def _VmB(VmKey):
     '''
     Private.
@@ -471,6 +476,7 @@ def resident(since=0.0):
     Return resident memory usage in bytes.
     '''
     return _VmB('VmRSS:') - since
+
 
 def stacksize(since=0.0):
     '''

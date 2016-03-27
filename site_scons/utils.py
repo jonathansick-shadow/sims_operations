@@ -17,6 +17,8 @@ import SCons.Script
 #  debug info (the verbose variable). These are set from command-line options
 #  in state.py.
 ##
+
+
 class Log(object):
 
     def __init__(self):
@@ -53,6 +55,8 @@ class Log(object):
 #
 #  Note that the entire program output is returned, not just a single line.
 ##
+
+
 def runExternal(cmd, fatal=False, msg=None):
     if msg is None:
         try:
@@ -90,6 +94,8 @@ def runExternal(cmd, fatal=False, msg=None):
 #  replacing any existing module-scope function with that name; this appears
 #  to be unavoidable.
 ##
+
+
 def memberOf(cls, name=None):
     if isinstance(cls, type):
         classes = (cls,)

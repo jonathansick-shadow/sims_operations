@@ -6,6 +6,7 @@ import time
 from SCons.Script import Execute, Mkdir  # for Execute and Mkdir
 import SCons.Node.FS
 
+
 def recursive_glob(dir_path, pattern, env):
     files = []
     has_files = env.Glob(os.path.join(dir_path, '*'))
@@ -14,6 +15,7 @@ def recursive_glob(dir_path, pattern, env):
         # Analyzing sub-directories
         files += recursive_glob(os.path.join(dir_path, "*"), pattern, env)
     return files
+
 
 def replace_base_path(path_to_remove, path_to_add, scons_fs_node, env):
     """

@@ -1,4 +1,7 @@
-import sys, re, time, socket
+import sys
+import re
+import time
+import socket
 import numpy as np
 import MySQLdb as mysqldb
 import os
@@ -11,7 +14,7 @@ def connect_db(hostname='localhost', username='www', passwdname='zxcvbnm', dbnam
     db = None
     conf_file = os.path.join(os.getenv("HOME"), ".my.cnf")
     if os.path.isfile(conf_file):
-        print 'Using connection information from %s' %(conf_file)
+        print 'Using connection information from %s' % (conf_file)
         db = mysqldb.connect(read_default_file=conf_file, db=dbname)
     else:
         db = mysqldb.connect(host=hostname, user=username, passwd=passwdname, db=dbname)
@@ -19,13 +22,16 @@ def connect_db(hostname='localhost', username='www', passwdname='zxcvbnm', dbnam
     db.autocommit(True)
     return db, cursor
 
+
 def getDbData(cursor, sql):
     cursor.execute(sql)
     ret = cursor.fetchall()
     return ret
 
+
 def insertDbData(cursor, sql):
     cursor.execute(sql)
+
 
 def calc_m5(visitFilter, filtsky, FWHMeff, expTime, airmass, tauCloud=0):
     # Set up expected extinction (kAtm) and m5 normalization values (Cm) for each filter.
@@ -33,30 +39,30 @@ def calc_m5(visitFilter, filtsky, FWHMeff, expTime, airmass, tauCloud=0):
     #
     # These values are calculated using $SYSENG_THROUGHPUTS/python/calcM5.py.
     # This set of values are calculated using v1.0 of the SYSENG_THROUGHPUTS repo.
-    Cm = {'u':22.94,
-          'g':24.46,
-          'r':24.48,
-          'i':24.34,
-          'z':24.18,
-          'y':23.73}
-    dCm_infinity = {'u':0.56,
-                    'g':0.12,
-                    'r':0.06,
-                    'i':0.05,
-                    'z':0.03,
-                    'y':0.02}
-    kAtm = {'u':0.50,
-            'g':0.21,
-            'r':0.13,
-            'i':0.10,
-            'z':0.07,
-            'y':0.18}
-    msky = {'u':22.95,
-            'g':22.24,
-            'r':21.20,
-            'i':20.47,
-            'z':19.60,
-            'y':18.63}
+    Cm = {'u': 22.94,
+          'g': 24.46,
+          'r': 24.48,
+          'i': 24.34,
+          'z': 24.18,
+          'y': 23.73}
+    dCm_infinity = {'u': 0.56,
+                    'g': 0.12,
+                    'r': 0.06,
+                    'i': 0.05,
+                    'z': 0.03,
+                    'y': 0.02}
+    kAtm = {'u': 0.50,
+            'g': 0.21,
+            'r': 0.13,
+            'i': 0.10,
+            'z': 0.07,
+            'y': 0.18}
+    msky = {'u': 22.95,
+            'g': 22.24,
+            'r': 21.20,
+            'i': 20.47,
+            'z': 19.60,
+            'y': 18.63}
     # Calculate adjustment if readnoise is significant for exposure time
     # (see overview paper, equation 7)
     Tscale = expTime / 30.0 * np.power(10.0, -0.4*(filtsky - msky[visitFilter]))
@@ -66,27 +72,30 @@ def calc_m5(visitFilter, filtsky, FWHMeff, expTime, airmass, tauCloud=0):
           1.25*np.log10(expTime/30.0) - kAtm[visitFilter]*(airmass-1.0) + 1.1*tauCloud)
     return m5
 
+
 def create_output_table(cursor, database, hname, sessionID):
     """
     Create summary table.
     """
     # Expected summary table name is -
-    summarytable = 'summary_%s_%d' %(hname, sessionID)
+    summarytable = 'summary_%s_%d' % (hname, sessionID)
     # First check if summary table with expected name exists.
     #  Note that by using the connect_db method above, we are already using the correct database (OpsimDB).
-    sql = "show tables like '%s'" %(summarytable)
+    sql = "show tables like '%s'" % (summarytable)
     results = getDbData(cursor, sql)
     if len(results) > 0:
         # Summary table exists. Stop and ask user to handle this.
         message = []
-        message.append("The summary table %s already exists in the MySQL %s database." % (summarytable, database))
+        message.append("The summary table %s already exists in the MySQL %s database." %
+                       (summarytable, database))
         message.append("Please remove the table if you wish to rerun gen_output.py")
         print os.linesep.join(message)
         sys.exit(255)
 
     # Otherwise, table does not exist and we're good to go.
-    print 'Creating summary table %s' %(summarytable)
-    sql = 'create table %s (obsHistID int(10) unsigned not null, sessionID int(10) unsigned not null, ' %(summarytable)
+    print 'Creating summary table %s' % (summarytable)
+    sql = 'create table %s (obsHistID int(10) unsigned not null, sessionID int(10) unsigned not null, ' % (
+        summarytable)
     sql += 'propID int(10), fieldID int(10) unsigned not null, fieldRA double, fieldDec double, '
     sql += 'filter varchar(8), expDate int(10) unsigned, expMJD double, night int(10) unsigned, '
     sql += 'visitTime double, visitExpTime double, finRank double, FWHMeff double,  FWHMgeom double, transparency double, '
@@ -103,7 +112,7 @@ def create_output_table(cursor, database, hname, sessionID):
     sql += 'filtSkyBright as filtSkyBrightness, rotSkyPos, lst, alt as altitude, az as azimuth, dist2Moon, '
     sql += 'solarElong, moonRA, moonDec, moonAlt, moonAZ, moonPhase, sunAlt, sunAz, phaseAngle, rScatter, mieScatter, '
     sql += 'moonIllum, moonBright, darkBright, rawSeeing, wind, humidity from ObsHistory '
-    sql += 'where Session_sessionID = %d;' %(sessionID)
+    sql += 'where Session_sessionID = %d;' % (sessionID)
     ret = getDbData(cursor, sql)
 
 #    ctioHeight = 2215.;
@@ -121,54 +130,58 @@ def create_output_table(cursor, database, hname, sessionID):
         fieldID = ret[k][2]
         sql = 'select fieldRA, fieldDec from Field where fieldID = %d' % fieldID
         fld = getDbData(cursor, sql)
-        sql = 'select slewTime, slewDist, slewID from SlewHistory where ObsHistory_Session_sessionID = %d and ObsHistory_obsHistID = %d' % (sessionID, obsHistID)
+        sql = 'select slewTime, slewDist, slewID from SlewHistory where ObsHistory_Session_sessionID = %d and ObsHistory_obsHistID = %d' % (
+            sessionID, obsHistID)
         slw = getDbData(cursor, sql)
-        sql = 'select Proposal_propID as propID from ObsHistory_Proposal where ObsHistory_Session_sessionID = %d and ObsHistory_obsHistID = %d' % (sessionID, obsHistID)
+        sql = 'select Proposal_propID as propID from ObsHistory_Proposal where ObsHistory_Session_sessionID = %d and ObsHistory_obsHistID = %d' % (
+            sessionID, obsHistID)
         prp = getDbData(cursor, sql)
         sql = 'select rotTelPos from SlewState where SlewHistory_slewID = %d' % slw[0][2]
         rtp = getDbData(cursor, sql)
 
         for i in range(len(prp)):
-            MJD = float(ret[k][5]);
-            alt_RAD = float(ret[k][17]);
-            az_RAD = float(ret[k][18]);
+            MJD = float(ret[k][5])
+            alt_RAD = float(ret[k][17])
+            az_RAD = float(ret[k][18])
 
-            moonRA_RAD = float(ret[k][21]);
-            moonDec_RAD = float(ret[k][22]);
-            lst_RAD = float(ret[k][16]);
-            moonha_RAD = lst_RAD - moonRA_RAD;
-            malt_RAD = float(ret[k][23]);
-            mphase = float(ret[k][25]);
-            saz = float(ret[k][27]);
-            salt = float(ret[k][26]);
-            mphase = np.arccos((mphase/50)-1)*180/np.pi;
+            moonRA_RAD = float(ret[k][21])
+            moonDec_RAD = float(ret[k][22])
+            lst_RAD = float(ret[k][16])
+            moonha_RAD = lst_RAD - moonRA_RAD
+            malt_RAD = float(ret[k][23])
+            mphase = float(ret[k][25])
+            saz = float(ret[k][27])
+            salt = float(ret[k][26])
+            mphase = np.arccos((mphase/50)-1)*180/np.pi
             # 5 sigma calculations
-            visitFilter = ret[k][3];
-            FWHMeff = float(ret[k][10]);
+            visitFilter = ret[k][3]
+            FWHMeff = float(ret[k][10])
             # Calculation of FWHMgeom based on Bo & Zeljko's
             #  fit between apparent (FWHMgeom) and Neff (FWHMeff) values
-            FWHMgeom = 0.822*FWHMeff + 0.052;
-            airmass = float(ret[k][12]);
-            filtsky = float(ret[k][14]);
-            expTime = float(ret[k][8]);
+            FWHMgeom = 0.822*FWHMeff + 0.052
+            airmass = float(ret[k][12])
+            filtsky = float(ret[k][14])
+            expTime = float(ret[k][8])
             tauCloud = 0
             m5 = calc_m5(visitFilter, filtsky, FWHMeff, expTime, airmass, tauCloud)
-            sql = 'insert into %s (obsHistID, sessionID, propID, fieldID, fieldRA, fieldDec, filter, ' %(summarytable)
+            sql = 'insert into %s (obsHistID, sessionID, propID, fieldID, fieldRA, fieldDec, filter, ' % (
+                summarytable)
             sql += 'expDate, expMJD, night, visitTime, visitExpTime, finRank, FWHMeff, FWHMgeom, transparency, airmass, vSkyBright, '
             sql += 'filtSkyBrightness, rotSkyPos, rotTelPos, lst, altitude, azimuth, dist2Moon, solarElong, moonRA, moonDec, '
             sql += 'moonAlt, moonAZ, moonPhase, sunAlt, sunAz, phaseAngle, rScatter, mieScatter, moonIllum, '
             sql += 'moonBright, darkBright, rawSeeing, wind, humidity, slewDist, slewTime, fiveSigmaDepth) values '
-            sql += '(%d, %d, %d, %d, %f, %f, "%s", %d, %f, %d, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f)' % (ret[k][0], ret[k][1], prp[i][0], ret[k][2], np.radians(fld[0][0]), np.radians(fld[0][1]), ret[k][3], ret[k][4], ret[k][5], ret[k][6], ret[k][7], ret[k][8], ret[k][9], FWHMeff, FWHMgeom, ret[k][11], ret[k][12], ret[k][13], ret[k][14], ret[k][15], rtp[1][0], ret[k][16], ret[k][17], ret[k][18], ret[k][19], ret[k][20], ret[k][21], ret[k][22], ret[k][23], ret[k][24], ret[k][25], ret[k][26], ret[k][27], ret[k][28], ret[k][29], ret[k][30], ret[k][31], ret[k][32], ret[k][33], ret[k][34], ret[k][35], ret[k][36], slw[0][1], slw[0][0], m5)
+            sql += '(%d, %d, %d, %d, %f, %f, "%s", %d, %f, %d, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f)' % (ret[k][0], ret[k][1], prp[i][0], ret[k][2], np.radians(fld[0][0]), np.radians(fld[0][1]), ret[k][3], ret[k][4], ret[k][5], ret[k][6], ret[k][7], ret[k][8], ret[k][
+                9], FWHMeff, FWHMgeom, ret[k][11], ret[k][12], ret[k][13], ret[k][14], ret[k][15], rtp[1][0], ret[k][16], ret[k][17], ret[k][18], ret[k][19], ret[k][20], ret[k][21], ret[k][22], ret[k][23], ret[k][24], ret[k][25], ret[k][26], ret[k][27], ret[k][28], ret[k][29], ret[k][30], ret[k][31], ret[k][32], ret[k][33], ret[k][34], ret[k][35], ret[k][36], slw[0][1], slw[0][0], m5)
             insertDbData(cursor, sql)
 
 if __name__ == "__main__":
     import sys
-    if len(sys.argv)<4:
+    if len(sys.argv) < 4:
         print "Usage : './gen_output.py <realhostname> <databasename> <sessionID>'"
         sys.exit(1)
     hname = sys.argv[1]
     database = sys.argv[2]
     sessionID = sys.argv[3]
     db, cursor = connect_db(dbname=database)
-    create_output_table(cursor, database, hname, int(sessionID));
+    create_output_table(cursor, database, hname, int(sessionID))
     db.close()

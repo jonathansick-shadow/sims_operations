@@ -38,6 +38,7 @@ for step in STEP_LIST:
     else:
         STEP_ABBR[step] = step[0]
 
+
 def exists_and_is_writable(dir):
     """
     Test if a dir exists. If no creates it, if yes checks if it is writeable.
@@ -66,7 +67,7 @@ def check_root_dirs():
 
     for (section, option) in (('opsim', 'base_dir'), ('opsim', 'log_dir'),
                               ('opsim', 'tmp_dir'),
-                             ('mysqld', 'data_dir')):
+                              ('mysqld', 'data_dir')):
         dir = config[section][option]
         if not exists_and_is_writable(dir):
             logging.fatal("%s is not writable check/update permissions or"
@@ -86,6 +87,7 @@ def check_root_dirs():
         logging.fatal("%s is not writable check/update permissions", dir)
         sys.exit(1)
     logger.info("opsim directory structure creation succeeded")
+
 
 def check_root_symlinks():
     """
@@ -119,11 +121,13 @@ def check_root_symlinks():
 
     log.info("opsim symlinks creation for externalized directories succeeded")
 
+
 def _symlink(target, link_name):
     logger = logging.getLogger()
     logger.debug("Creating symlink, target : %s, link name : %s ", target,
                  link_name)
     os.symlink(target, link_name)
+
 
 def uninstall(target, source, env):
     logger = logging.getLogger()
@@ -139,6 +143,8 @@ def uninstall(target, source, env):
             shutil.rmtree(upath)
 
 template_params_dict = None
+
+
 def _get_template_params():
     """
     Compute templates parameters from opsim meta-configuration file from PATH
@@ -186,6 +192,7 @@ def _get_template_params():
 
     return params_dict
 
+
 def _set_perms(file):
     (path, basename) = os.path.split(file)
     script_list = [c + ".sh" for c in COMPONENTS]
@@ -196,6 +203,7 @@ def _set_perms(file):
     # all other files are configuration files
     else:
         os.chmod(file, 0660)
+
 
 def apply_tpl(src_file, target_file, params_dict=None):
     """
@@ -225,6 +233,7 @@ def apply_tpl(src_file, target_file, params_dict=None):
     with open(target_file, "w") as cfg:
         cfg.write(out_cfg)
 
+
 def apply_templates(template_root, dest_root):
 
     logger = logging.getLogger()
@@ -250,6 +259,7 @@ def apply_templates(template_root, dest_root):
 
     return True
 
+
 def user_yes_no_query(question):
     sys.stdout.write('\n%s [y/n]\n' % question)
     while True:
@@ -257,6 +267,7 @@ def user_yes_no_query(question):
             return strtobool(raw_input().lower())
         except ValueError:
             sys.stdout.write('Please respond with \'y\' or \'n\'.\n')
+
 
 class OpSimConfigTemplate(string.Template):
     delimiter = '{{'

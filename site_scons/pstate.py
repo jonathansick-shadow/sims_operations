@@ -2,6 +2,7 @@ import SCons.Script
 
 log = None
 
+
 def init():
     import utils
     global log

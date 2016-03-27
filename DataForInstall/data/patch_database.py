@@ -41,7 +41,9 @@ Where
  means that the sky is too cloudy to observe.
 """
 
-import sys, time, re
+import sys
+import time
+import re
 from utilities import *
 
 
@@ -72,68 +74,61 @@ MONTH = {'January': 1,
          'December': 12}
 
 
-
-
 # Utility routines
-def error (msg):
+def error(msg):
     """
     Simple utility routine: print msg to STDERR and quit with a status 
     code of 1.
     """
-    sys.stderr.write ('ERROR: %s\n' % (msg))
-    sys.exit (1)
+    sys.stderr.write('ERROR: %s\n' % (msg))
+    sys.exit(1)
 
-def usage ():
+
+def usage():
     """
     Print usage strung and exit with a status code of 1.
     """
     USAGE = 'patch_database.py db_table cloud_data_file'
-    sys.stderr.write ('%s\n' % (USAGE))
-    sys.exit (1)
+    sys.stderr.write('%s\n' % (USAGE))
+    sys.exit(1)
 
 
-
-def getNightQuartBoundaries (year, month, startDay, epoch):
+def getNightQuartBoundaries(year, month, startDay, epoch):
     """
     Compute the start and end times for the 4 quarters of the night of 
     year/month/startDay-endDay (at LATITUDE, LONGITUDE).
-    
+
     We assume that each quarter lasts 2.5 hours.
-    
+
     Return the (MJD-epoch) values for the beginning and end of the 4
     quarters.
     """
     deltaMJD = QUART / 24.
-    
+
     # Compute MJD at midnight
     date = '%04d-%02d-%02dT24:00:00.0' % (year, month, startDay)
-    midnightMJD = gre2mjd (date)
-    
+    midnightMJD = gre2mjd(date)
+
     # Night quarters
     quarts = []
-    
+
     # First quarter
     start = ((midnightMJD - 2. * deltaMJD) - epoch) * DAY
-    end = ((midnightMJD - deltaMJD) - epoch ) * DAY
-    quarts.append ((start, end))
+    end = ((midnightMJD - deltaMJD) - epoch) * DAY
+    quarts.append((start, end))
     # Second quarter
     start = ((midnightMJD - deltaMJD) - epoch) * DAY
-    end = (midnightMJD - epoch ) * DAY
-    quarts.append ((start, end))
+    end = (midnightMJD - epoch) * DAY
+    quarts.append((start, end))
     # Third quarter
     start = (midnightMJD - epoch) * DAY
-    end = ((midnightMJD + deltaMJD) - epoch ) * DAY
-    quarts.append ((start, end))
+    end = ((midnightMJD + deltaMJD) - epoch) * DAY
+    quarts.append((start, end))
     # Fourth quarter
     start = ((midnightMJD + deltaMJD) - epoch) * DAY
-    end = ((midnightMJD + 2. * deltaMJD) - epoch ) * DAY
-    quarts.append ((start, end))
+    end = ((midnightMJD + 2. * deltaMJD) - epoch) * DAY
+    quarts.append((start, end))
     return (quarts)
-
-
-
-
-
 
 
 if (__name__ == '__main__'):
@@ -141,78 +136,77 @@ if (__name__ == '__main__'):
     try:
         dbTable = sys.argv[1]
     except:
-        usage ()
+        usage()
     try:
-        data = file (sys.argv[2]).readlines ()
+        data = file(sys.argv[2]).readlines()
     except:
-        usage ()
-    
-    
+        usage()
+
     # Parse the config file
-    conf = readConfFile (CONFIG)
+    conf = readConfFile(CONFIG)
     try:
         lat = conf['latitude']
         lon = conf['longitude']
     except:
-        error ('"latitude" and/or "longitude" keywords not in %s' \
-            % (CONFIG))
+        error('"latitude" and/or "longitude" keywords not in %s'
+              % (CONFIG))
     try:
         epoch = conf['simEpoch']
     except:
-        error ('"simEpoch" keyword not in %s' % (CONFIG))
-    
+        error('"simEpoch" keyword not in %s' % (CONFIG))
+
     # Get the year from the epoch
-    (year, m, d, hh, mm, ss) = mjd2gre (epoch)
-    
+    (year, m, d, hh, mm, ss) = mjd2gre(epoch)
+
     # Compute the new epoch
-    epoch = gre2mjd ('%04d-01-01T00:00:00.0' % (year))
-    
+    epoch = gre2mjd('%04d-01-01T00:00:00.0' % (year))
+
     # Compile the RegEx pattern
-    pat = re.compile (PATTERN)
-    
+    pat = re.compile(PATTERN)
+
     # Now, split each line and convert the dates in seconds from
     # January 1st using the RegEx pattern pat.
     ignored = 0
-    total = len (data)
+    total = len(data)
     for line in data:
         correct = False
         try:
-            fields = res = pat.match (line).groups ()
+            fields = res = pat.match(line).groups()
         except:
             fields = ()
-        if (len (fields) < 5):
+        if (len(fields) < 5):
             ignored += 1
             print ('Ignoring "%s"' % (line))
             continue
-        
+
         # Determine the start and end time of the quarters of the night.
-        quarts = getNightQuartBoundaries (year=year,
-                                          month=MONTH[fields[0]], 
-                                          startDay=int(fields[1]), 
-                                          epoch=epoch)
-        
+        quarts = getNightQuartBoundaries(year=year,
+                                         month=MONTH[fields[0]],
+                                         startDay=int(fields[1]),
+                                         epoch=epoch)
+
         # Fetch the cloud factors
         clouds = fields[3:7]
-        
+
         # Now, update the db
-        for i in range (4):
+        for i in range(4):
             (start, end) = quarts[i]
-            cloud = int (clouds[i])
+            cloud = int(clouds[i])
             if (cloud > 4):
-                query = QUERY % (dbTable, int (start), int (end))
+                query = QUERY % (dbTable, int(start), int(end))
                 # print (query)
-                (n, dummy) = executeSQL (query)
+                (n, dummy) = executeSQL(query)
         # <-- end for loop
     # <-- end for loop
-    
+
     # Exit
     if (ignored > 0):
         print ('Skipped %d lines out of %d' % (ignored, total))
     else:
         print ('Fully processed %d lines' % (total))
-    
-    
-    
+
+
+
 
 
 

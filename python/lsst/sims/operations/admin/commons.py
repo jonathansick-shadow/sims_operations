@@ -11,10 +11,12 @@ import const
 
 config = dict()
 
+
 def read_user_config():
     config_file = os.path.join(os.getenv("HOME"), ".lsst", "opsim.conf")
     config = read_config(config_file)
     return config
+
 
 def read_config(config_file):
 
@@ -27,7 +29,7 @@ def read_config(config_file):
         exit(1)
 
     parser = ConfigParser.SafeConfigParser()
-    #parser.readfp(io.BytesIO(const.DEFAULT_CONFIG))
+    # parser.readfp(io.BytesIO(const.DEFAULT_CONFIG))
     parser.read(config_file)
 
     logger.debug("Build configuration : ")
@@ -64,19 +66,21 @@ def read_config(config_file):
 
     return config
 
+
 def getConfig():
     return config
 
+
 def restart(service_name):
 
-        config = getConfig()
-        if len(config) == 0:
-            raise RuntimeError("OpSim configuration is empty")
-        initd_path = os.path.join(config['opsim']['run_base_dir'], 'etc',
-                                  'init.d')
-        daemon_script = os.path.join(initd_path, service_name)
-        out = os.system("%s stop" % daemon_script)
-        out = os.system("%s start" % daemon_script)
+    config = getConfig()
+    if len(config) == 0:
+        raise RuntimeError("OpSim configuration is empty")
+    initd_path = os.path.join(config['opsim']['run_base_dir'], 'etc',
+                              'init.d')
+    daemon_script = os.path.join(initd_path, service_name)
+    out = os.system("%s stop" % daemon_script)
+    out = os.system("%s start" % daemon_script)
 
 
 def run_command(cmd_args, stdin_file=None, stdout_file=None, stderr_file=None,

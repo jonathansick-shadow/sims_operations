@@ -45,8 +45,11 @@ from Instrument import *
 from Filters import *
 from SchedulingData import *
 
-#class Simulator (Simulation.Process):
+# class Simulator (Simulation.Process):
+
+
 class Simulator(object):
+
     def __init__(self, lsstDB, obsProfile, sessionID, nRun, seeingEpoch, simStartDay, fov, idleDelay,
                  targetList, maxCloud, runSeeingFudge, telSeeing, opticalDesSeeing, cameraSeeing,
                  scaleToNeff, atmNeffFactor, filtersConf,
@@ -196,7 +199,7 @@ class Simulator(object):
         # init count of nights
         self.nightCnt = -1
 
-        #self.printDowntime()
+        # self.printDowntime()
 
         # prepare for TimeHistory recording
         self.timeHist = TimeHistory(lsstDB=self.lsstDB, dbTableDict=self.dbTableDict, log=self.log,
@@ -290,7 +293,7 @@ class Simulator(object):
             # --*-----|----------------------|-------------->
             #   t  sunRise                 sunSet         t
 
-            ## LD: need to check if we're before previous day's sunset.
+            # LD: need to check if we're before previous day's sunset.
             #  <---------------DAY------------------->
             # --*-----|----------------------|------------->
             #   t  sunSet                  sunRise        t
@@ -335,7 +338,7 @@ class Simulator(object):
                     daysDown = self.unschedDownDuration.pop(0)
                     self.unschedDownActivity.pop(0)
                     schedDown = False
-                    #print "Simulator: doing unscheduled downtime"
+                    # print "Simulator: doing unscheduled downtime"
 
                 #startDownTime = t
                 #startDownNight = self.nightCnt
@@ -396,7 +399,7 @@ class Simulator(object):
                     else:
                         self.nextUnschedDown = -1
 
-                #self.printDowntime()
+                # self.printDowntime()
 
                 # overlapping downtimes?
                 while self.nextSchedDown != -1 and self.nextSchedDown < self.nightCnt:

@@ -4,6 +4,7 @@ from LSSTObject import *
 from utilities import *
 from AstronomicalSky import *
 
+
 class SchedulingData(LSSTObject):
 
     def __init__(self, configFile, surveyStartTime, surveyEndTime, astroSky, lsstDB, sessionID):
@@ -41,7 +42,7 @@ class SchedulingData(LSSTObject):
             # --*-----|----------------------|-------------->
             #   t  sunRise                 sunSet         t
 
-            ## LD: need to check if we're before previous day's sunset.
+            # LD: need to check if we're before previous day's sunset.
             #  <---------------DAY------------------->
             # --*-----|----------------------|------------->
             #   t  sunSet                  sunRise        t
@@ -170,7 +171,7 @@ class SchedulingData(LSSTObject):
         night = lastnight
         t = self.midnight[night]
         x = self.sky.getIntTwilightSunriseSunset(t)
-        #print x
+        # print x
         (sunRise, sunSet, sunRiseMJD, sunSetMJD, sunRiseTwil, sunSetTwil) = x
         last_sunSetMJD = sunSetMJD
         last_sunSet = sunSet
@@ -230,21 +231,21 @@ class SchedulingData(LSSTObject):
         for n in range(self.lookAhead_nights[0], self.currentNight):
             for t in self.lookAhead_times[n]:
                 # if t in self.alt.keys():
-                    del self.alt[t]
-                    del self.az[t]
-                    del self.pa[t]
-                    del self.airmass[t]
-                    del self.brightness[t]
-                    del self.dist2moon[t]
+                del self.alt[t]
+                del self.az[t]
+                del self.pa[t]
+                del self.airmass[t]
+                del self.brightness[t]
+                del self.dist2moon[t]
 
                 # if t in self.visible.keys():
-                    for field in self.visible[t].keys():
-                        for prop in self.visible[t][field].keys():
-                            for filter in self.visible[t][field][prop]:
-                                self.visibleTime[field][filter][prop] -= self.dt
-                    del self.visible[t]
+                for field in self.visible[t].keys():
+                    for prop in self.visible[t][field].keys():
+                        for filter in self.visible[t][field][prop]:
+                            self.visibleTime[field][filter][prop] -= self.dt
+                del self.visible[t]
 
-                    del self.dateProfile[t]
+                del self.dateProfile[t]
 
             del self.sunSetMJD[n]
             del self.sunSet[n]

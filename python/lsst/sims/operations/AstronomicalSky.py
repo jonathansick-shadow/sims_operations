@@ -45,6 +45,7 @@ Select/Discard Fileds
 from utilities import *
 from LSSTObject import *
 
+
 class AstronomicalSky(LSSTObject):
     # Class variables
     PLANETS = {'Sun': 0,
@@ -335,7 +336,6 @@ class AstronomicalSky(LSSTObject):
         return (sunRiseTwil, sunSetTwil)
 
     def getNightMidpoint(self, date):
-
         """
         Compute the midpoint between sunset and sunrise at the location on
         Earth specified by (self.latitude_RAD, self.longitude).
@@ -462,10 +462,10 @@ class AstronomicalSky(LSSTObject):
         #                                     self.latitude_RAD)
         (planetRA_RAD, planetDec_RAD, diam) = pal.rdplan(mjd, self.PLANETS[planet], self.longitude_RAD,
                                                          self.latitude_RAD)
-        #slaDist_RAD = slalib.sla_dsep(target[0],target[1],
+        # slaDist_RAD = slalib.sla_dsep(target[0],target[1],
         #                          planetRA_RAD,planetDec_RAD)
         slaDist_RAD = pal.dsep(target[0], target[1], planetRA_RAD, planetDec_RAD)
-        #print "getPlanetDistance: slaDist_RAD:%f" % (slaDist_RAD)
+        # print "getPlanetDistance: slaDist_RAD:%f" % (slaDist_RAD)
         return slaDist_RAD
 
     def getDistance(self, target1, target2):
@@ -483,7 +483,7 @@ class AstronomicalSky(LSSTObject):
         if target1[0] == target2[0] and target1[1] == target2[1]:
             return 0.
 
-        #slaDist_RAD = slalib.sla_dsep(target1[0],target1[1],
+        # slaDist_RAD = slalib.sla_dsep(target1[0],target1[1],
         #                              target2[0],target2[1])
         slaDist_RAD = pal.dsep(target1[0], target1[1], target2[0], target2[1])
 
@@ -619,7 +619,7 @@ class AstronomicalSky(LSSTObject):
         alpha = math.acos(2. * moonPhase_PERCENT / 100. - 1.) * RAD2DEG
         alpha = normalize(alpha, min=0., max=180., degrees=True)
 
-        #distance2moon_RAD = slalib.sla_dsep (moonRA_RAD, moonDec_RAD,
+        # distance2moon_RAD = slalib.sla_dsep (moonRA_RAD, moonDec_RAD,
         #                                     ra*DEG2RAD,dec*DEG2RAD)
         distance2moon_RAD = pal.dsep(moonRA_RAD, moonDec_RAD, ra * DEG2RAD, dec * DEG2RAD)
 
@@ -823,7 +823,7 @@ class AstronomicalSky(LSSTObject):
         Output
         local Sidereal Time (float) in radians
         """
-        ## LSST convention is W is negative, East is positive
+        # LSST convention is W is negative, East is positive
         #lst_RAD = slalib.sla_gmst(mjd)  + longitude_RAD
         lst_RAD = pal.gmst(mjd) + longitude_RAD
 

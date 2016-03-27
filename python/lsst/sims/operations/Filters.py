@@ -63,8 +63,9 @@ filterOffset['i', 100.] = -0.47
 filterOffset['z', 100.] = -1.16
 
 
-#class Filters(Simulation.Process):
+# class Filters(Simulation.Process):
 class Filters(object):
+
     def __init__(self, lsstDB, filtersConf, sessionID, dbTableDict, telSeeing, opticalDesSeeing, cameraSeeing,
                  scaleToNeff, atmNeffFactor, log=False, logfile='./Filters.log', verbose=0):
         """
@@ -183,7 +184,7 @@ class Filters(object):
         filterList = {}
         air_3_5 = math.pow(airmass, 0.6)
         for ix in range(len(self.filterNamesSorted)):
-            #print "%d" % (ix)
+            # print "%d" % (ix)
             if self.filterMinBrigSorted[ix] < brightness < self.filterMaxBrigSorted[ix]:
                 # Layer on adjustments to seeing:
                 # entered with: raw -> tooGood
@@ -204,11 +205,11 @@ class Filters(object):
         return filterList
 
     def computeFwhmEffSeeing(self, filterList, index, seeing, airmassCorr):
-            seeing_fwhm_atm = seeing * self.basefilterWavelenSorted[index] * airmassCorr
-            seeing_fwhm_sys = airmassCorr * self.seeing_fwhm_sys_zenith
-            seeing_fwhm_eff = self.scaleToNeff * math.sqrt(seeing_fwhm_sys**2 +
-                                                           self.atmNeffFactor * seeing_fwhm_atm**2)
-            filterList[self.filterNamesSorted[index]] = seeing_fwhm_eff
+        seeing_fwhm_atm = seeing * self.basefilterWavelenSorted[index] * airmassCorr
+        seeing_fwhm_sys = airmassCorr * self.seeing_fwhm_sys_zenith
+        seeing_fwhm_eff = self.scaleToNeff * math.sqrt(seeing_fwhm_sys**2 +
+                                                       self.atmNeffFactor * seeing_fwhm_atm**2)
+        filterList[self.filterNamesSorted[index]] = seeing_fwhm_eff
 
     def computeSkyBrightnessForFilter(self, filter, skyBrightness, date, twilightProfile, moonProfileAltAz):
 

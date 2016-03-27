@@ -11,10 +11,12 @@ from Proposal import *
 from SeqHistory import *
 import copy
 
+
 class TransSubSeqProp(Proposal):
     """
     This class is here to describe a Transient Objects case scenario.
     """
+
     def __init__(self, lsstDB, propConf, propName, propFullName, sky, weather, sessionID, filters,
                  targetList=None, dbTableDict=None, log=False, logfile='./TransSubSeqProp.log', verbose=0,
                  transientConf=DefaultNEAConfigFile):
@@ -194,7 +196,7 @@ class TransSubSeqProp(Proposal):
         restartedlost = 0
         restartedcomplete = 0
         keptsequences = 0
-        #listOfNewFields=self.targetsNewSeq.keys()
+        # listOfNewFields=self.targetsNewSeq.keys()
         listOfNewFields = sorted(self.targetsNewSeq.iterkeys())
         while (len(listOfNewFields) > 0 and currentActiveSequences < self.maxNumberActiveSequences and
                 (coaddedProgress / max(coaddedNumber, 1) > runProgress or
@@ -244,7 +246,7 @@ class TransSubSeqProp(Proposal):
                     # print "Prop[%d].startNight() while targetsNewSeq: seq complete: "\
                     #       "delete self.tonightTargets[%d] date = %d" % (self.propID, fieldID, date)
                     del self.tonightTargets[fieldID]
-            #else:
+            # else:
             #    prog = self.sequences[fieldID].GetProgress()
             #    if prog >= 1.0:
             #    print "seqnNum=%i fieldID=%i progress=%f" % (self.sequences[fieldID].seqNum, fieldID, prog,
@@ -425,9 +427,9 @@ class TransSubSeqProp(Proposal):
                     #airmass = self.schedulingData.airmass[fieldID][sdtime]
 
                     filter = self.sequences[fieldID].GetNextFilter(subseq)
-                    #print filter
+                    # print filter
                     exclusiveBlockRequired = self.sequences[fieldID].GetExclusiveBlockNeed(subseq)
-                    #print "exclusiveBlockRequired = %s" % (exclusiveBlockRequired)
+                    # print "exclusiveBlockRequired = %s" % (exclusiveBlockRequired)
 
                     recordFieldFilter = self.obsPool[fieldID][filter]
                     recordFieldFilter.propID = self.propID
@@ -604,7 +606,7 @@ class TransSubSeqProp(Proposal):
                             factor = self.rankTimeMax
                         else:
                             if self.globalProgress < 1.0:
-                                    factor = self.rankIdleSeq / (1.0 - self.globalProgress)
+                                factor = self.rankIdleSeq / (1.0 - self.globalProgress)
                             elif self.overflowLevel > 0.0:
                                 factor = self.rankIdleSeq / (self.overflowLevel / self.globalProgress)
 
@@ -612,7 +614,7 @@ class TransSubSeqProp(Proposal):
                             + rankDaysLeft * self.rankDaysLeftMax
 
                         filter = self.sequences[fieldID].GetNextFilter(subseq)
-                        #print 'fieldID='+str(fieldID)+' subseq='+str(subseq)+' filter='+str(filter)
+                        # print 'fieldID='+str(fieldID)+' subseq='+str(subseq)+' filter='+str(filter)
                         exclusiveBlockRequired = self.sequences[fieldID].GetExclusiveBlockNeed(subseq)
 
                         # Create the corresponding Observation
@@ -901,7 +903,7 @@ class TransSubSeqProp(Proposal):
                 if self.log:
                     self.log.info('%sProp: closeProposal() propID=%d sequence LOST for field=%i end of '
                                   'simulation' % (self.propFullName, self.propID, fieldID))
-                #self.sequences[fieldID].Abort()
+                # self.sequences[fieldID].Abort()
 
                 # Update sequence history DB
                 seq = self.sequences[fieldID]

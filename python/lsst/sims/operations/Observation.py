@@ -43,7 +43,9 @@ Accessors
 from utilities import *
 from LSSTObject import *
 
+
 class Observation(LSSTObject):
+
     def __init__(self, dateProfile, moonProfile, propRank=0, proposal=None, propID=None, subsequence=None,
                  pairNum=0, ra=0.0, dec=0.0, filter=None, maxSeeing=None, exposureTime=0, fieldID=None,
                  seqn=0, rawSeeing=None, seeing=None, transparency=None, cloudSeeing=None, slewTime=None,
